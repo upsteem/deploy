@@ -10,5 +10,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "https://github.com/upsteem/deploy"
   gem.license       = "MIT"
 
+  gem.add_dependency "activesupport", "~> 4.2"
   gem.add_dependency "git", "~> 1.3.0"
+  gem.add_dependency "memoist", "~> 0.14.0"
 end
