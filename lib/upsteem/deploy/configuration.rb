@@ -1,4 +1,5 @@
 %w[
+  constants
   setup
 ].each do |file|
   require_relative("configuration/#{file}")
@@ -7,26 +8,11 @@ end
 module Upsteem
   module Deploy
     class Configuration
+      include Constants
       extend Setup
       extend Memoist
 
       attr_reader :project_path
-
-      # Names of environments supported by default.
-      SUPPORTED_ENVIRONMENTS = %w[dev staging production].tap do |list|
-        list.each(&:freeze)
-        list.freeze
-      end
-
-      # Default mapping of environment names into branches.
-      TARGET_BRANCHES = { 
-        "production" => "master"
-      }.tap do |h| 
-        h.each do |_, v|
-          v.freeze
-        end 
-        h.freeze
-      end
 
       def supported_environments
         SUPPORTED_ENVIRONMENTS
@@ -61,6 +47,8 @@ module Upsteem
         !!options[:environment_invariant_project]
       end
       memoize :environment_invariant_project?
+
+      private
 
       attr_reader :options
 

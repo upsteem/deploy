@@ -8,7 +8,7 @@ module Upsteem
 
         def set_up(configuration, name, feature_branch)
           new(
-            configuration,
+            parse_configuration(configuration),
             parse_name(configuration, name),
             parse_feature_branch(feature_branch)
           )
@@ -16,22 +16,27 @@ module Upsteem
 
         private
 
-        def supported?(name)
-          SUPPORTED_ENVIRONMENTS.include?(name)
+        def parse_configuration(configuration)
+          configuration || raise(ArgumentError, "Configuration must be supplied!")
         end
 
         def parse_name(configuration, str)
           name = str.to_s.strip
-          unless configuration.environment_supported?(name)
-            raise(
-              Errors::InvalidEnvironment.new(name, configuration)
-            )
-          end
+          raise_error("Environment name cannot be blank") unless name.present?
+          raise_error("Environment not supported: #{name.inspect}") unless supported?(configuration, name)
           name
         end
 
         def parse_feature_branch(str)
           str.to_s.strip.presence
+        end
+
+        def supported?(configuration, name)
+          configuration.environment_supported?(name)
+        end
+
+        def raise_error(message)
+          raise Errors::InvalidEnvironment, message
         end
       end
     end

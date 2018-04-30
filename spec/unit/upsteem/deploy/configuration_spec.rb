@@ -3,8 +3,9 @@ Upsteem::SpecHelperLoader.require_shared_examples_for("exception_raiser")
 
 describe Upsteem::Deploy::Configuration do
   let(:project_path) { "/path/to/something" }
+  let(:project_path_as_arg) { project_path }
   let(:project_path_is_directory) { true }
-  let(:options) { {} }
+  let(:options) { { project_path: "/something/else/not/usable" } }
 
   let(:logger) { instance_double("Logger", "default") }
   let(:custom_logger) { instance_double("Logger", "custom") }
@@ -15,11 +16,11 @@ describe Upsteem::Deploy::Configuration do
   let(:custom_git_proxy) { instance_double("Upsteem::Deploy::GitProxy", "custom") }
 
   shared_context "default instance" do
-    let(:configuration) { described_class.set_up(project_path) }
+    let(:configuration) { described_class.set_up(project_path_as_arg) }
   end
 
   shared_context "custom instance" do
-    let(:configuration) { described_class.set_up(project_path, options) }
+    let(:configuration) { described_class.set_up(project_path_as_arg, options) }
   end
 
   before do
@@ -30,7 +31,7 @@ describe Upsteem::Deploy::Configuration do
   end
 
   describe ".new" do
-    subject { described_class.new }
+    subject { described_class.new(project_path_as_arg, options) }
 
     it_behaves_like "exception raiser", NoMethodError
   end
@@ -38,8 +39,21 @@ describe Upsteem::Deploy::Configuration do
   describe ".set_up" do
     subject { configuration }
 
-    shared_examples_for "validator and instance creator" do
+    shared_examples_for "instance returner" do
       it { is_expected.to be_instance_of(described_class) }
+
+      it "sets and exposes project path" do
+        expect(subject.project_path).to eq(project_path)
+      end
+    end
+
+    shared_examples_for "instance returner or error raiser" do
+      it_behaves_like "instance returner"
+
+      context "when project path needs formatting" do
+        let(:project_path_as_arg) { " #{project_path}  " }
+        it_behaves_like "instance returner"
+      end
 
       context "when project path is not a directory" do
         let(:project_path_is_directory) { false }
@@ -54,31 +68,12 @@ describe Upsteem::Deploy::Configuration do
 
     context "when options argument not given" do
       include_context "default instance"
-      it_behaves_like "validator and instance creator"
+      it_behaves_like "instance returner or error raiser"
     end
 
     context "when options argument given" do
       include_context "custom instance"
-      it_behaves_like "validator and instance creator"
-    end
-  end
-
-  describe "#project_path" do
-    subject { configuration.project_path }
-
-    shared_examples_for "attribute returner" do
-      it { is_expected.to eq(project_path) }
-    end
-
-    context "when options not given" do
-      include_context "default instance"
-      it_behaves_like "attribute returner"
-    end
-
-    context "when options given" do
-      let(:options) { { project_path: "/something/else/not/usable" } }
-      include_context "custom instance"
-      it_behaves_like "attribute returner"
+      it_behaves_like "instance returner or error raiser"
     end
   end
 
@@ -165,7 +160,10 @@ describe Upsteem::Deploy::Configuration do
   end
 
   describe "#logger" do
-    subject { configuration.logger }
+    subject do
+      configuration.logger
+      configuration.logger
+    end
 
     context "when options not given" do
       include_context "default instance"
@@ -182,7 +180,10 @@ describe Upsteem::Deploy::Configuration do
   end
 
   describe "#git" do
-    subject { configuration.git }
+    subject do
+      configuration.git
+      configuration.git
+    end
 
     context "when options not given" do
       include_context "default instance"

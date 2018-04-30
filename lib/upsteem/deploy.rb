@@ -11,6 +11,7 @@ require "memoist"
   environment
   git_proxy
   tasks
+  deployer
   usage
 ].each do |file|
   require_relative("deploy/#{file}")
