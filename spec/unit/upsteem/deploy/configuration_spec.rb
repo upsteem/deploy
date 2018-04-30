@@ -1,5 +1,5 @@
 require "spec_helper"
-Upsteem::SpecHelperLoader.require_shared_examples_for("exception_raiser")
+Upsteem::Deploy::SpecHelperLoader.require_shared_examples_for("exception_raiser")
 
 describe Upsteem::Deploy::Configuration do
   let(:project_path) { "/path/to/something" }
