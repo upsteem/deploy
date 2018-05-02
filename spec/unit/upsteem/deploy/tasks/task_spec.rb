@@ -1,9 +1,8 @@
 require "spec_helper"
-Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_for("unit_test_setup_for_tasks")
-Upsteem::Deploy::SpecHelperLoader.require_shared_examples_for("tasks")
+Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_and_examples_for("unit/tasks")
 
 describe Upsteem::Deploy::Tasks::Task do
-  include_context "unit test setup for tasks"
+  include_context "setup for tasks"
 
   describe "#run" do
     subject { task.run }

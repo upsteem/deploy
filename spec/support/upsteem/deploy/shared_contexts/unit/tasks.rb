@@ -1,4 +1,4 @@
-shared_context "unit test setup for tasks" do
+shared_context "setup for tasks" do
   let(:project_path) { "/path/to/something" }
   let(:environment_name) { "someenv" }
   let(:feature_branch) { "DEV-123" }
@@ -17,6 +17,10 @@ shared_context "unit test setup for tasks" do
   shared_context "customizable task" do
     let(:task_options) { {} }
     let(:task) { described_class.new(environment, task_options) }
+  end
+
+  def allow_system_calls
+    allow_any_instance_of(described_class).to receive(:system)
   end
 
   def allow_project_path_from_configuration
@@ -56,6 +60,7 @@ shared_context "unit test setup for tasks" do
   end
 
   before do
+    allow_system_calls
     allow_methods_from_configuration
     allow_methods_from_environment
   end
