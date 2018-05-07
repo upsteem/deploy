@@ -9,12 +9,12 @@ module Upsteem
         end
 
         # Default mapping of environment names into branches.
-        TARGET_BRANCHES = { 
+        TARGET_BRANCHES = {
           "production" => "master"
-        }.tap do |h| 
+        }.tap do |h|
           h.each do |_, v|
             v.freeze
-          end 
+          end
           h.freeze
         end
       end
