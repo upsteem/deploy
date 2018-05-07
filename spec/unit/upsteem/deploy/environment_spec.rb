@@ -66,7 +66,7 @@ describe Upsteem::Deploy::Environment do
       let(:error_class) { Upsteem::Deploy::Errors::InvalidEnvironment }
       let(:predefined_exception) { [error_class, exception_message] }
 
-      it_behaves_like "predefined exception raiser"
+      it_behaves_like "exception raiser"
     end
 
     shared_examples_for "invalid environment error raiser on blank name" do |name|

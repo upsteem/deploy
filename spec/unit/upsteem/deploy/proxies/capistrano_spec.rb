@@ -35,7 +35,7 @@ describe Upsteem::Deploy::Proxies::Capistrano do
         [Upsteem::Deploy::Errors::DeployError, "Capistrano deploy failed: Exit status 2"]
       end
 
-      it_behaves_like "predefined exception raiser"
+      it_behaves_like "exception raiser"
     end
   end
 end

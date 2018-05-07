@@ -41,7 +41,7 @@ describe Upsteem::Deploy::Proxies::Bundler do
         [Upsteem::Deploy::Errors::DeployError, "Bundle install failed: Exit status 2"]
       end
 
-      it_behaves_like "predefined exception raiser"
+      it_behaves_like "exception raiser"
     end
   end
 
@@ -81,7 +81,7 @@ describe Upsteem::Deploy::Proxies::Bundler do
           end
         end
 
-        it_behaves_like "predefined exception raiser"
+        it_behaves_like "exception raiser"
       end
     end
 

@@ -9,7 +9,13 @@ module Upsteem
 
         def current_branch
           git.current_branch
-        end 
+        end
+
+        def status
+          git.status
+        rescue Git::GitExecuteError
+          raise Errors::DeployError, "Error on checking git status"
+        end
 
         def create_merge_commit(branch, custom_args = []) 
           args = [branch, "--no-commit", "--no-ff"] + custom_args

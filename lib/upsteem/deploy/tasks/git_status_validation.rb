@@ -1,13 +1,12 @@
 module Upsteem
   module Deploy
     module Tasks
-      class GitStatusValidation
+      class GitStatusValidation < Task
         extend Memoist
 
         def run
+          logger.info("Checking git status")
           report.clean? ? validation_successful : validation_failed
-        rescue Git::GitExecuteError
-          raise Errors::DeployError, "Failed to check git status"
         end
 
         private
@@ -28,15 +27,15 @@ module Upsteem
         end
 
         def validation_failed
-          raise Errors::DeployError,
-                "#{report.description} Please take necessary steps (e.g. commit manually) " \
-                "until git status is clean! #{untracked_files_description}"
+          logger.error(report.description)
+          log_untracked_files
+          raise Errors::DeployError, "Please take necessary steps (e.g. commit manually) until git status is clean!"
         end
 
-        def untracked_files_description
-          return "" if report.untracked.zero?
-          list = status.untracked.map(&:file).join("\n")
-          "Untracked files:\n#{list}"
+        def log_untracked_files
+          return if report.untracked.zero?
+          logger.error("Untracked files:")
+          logger.error(status.untracked.keys.sort.join("\n"))
         end
 
         class StatusReport
