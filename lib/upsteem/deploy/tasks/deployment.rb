@@ -57,7 +57,7 @@ module Upsteem
 
         def log_failure(deploy_error)
           if deploy_error.cause
-            logger.error("#{deploy_error.message} Cause: #{deploy_error.cause}")
+            logger.error("#{deploy_error.message}. Cause: #{deploy_error.cause}")
           else
             logger.error(deploy_error.message)
           end

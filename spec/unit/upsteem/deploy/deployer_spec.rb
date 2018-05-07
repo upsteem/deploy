@@ -1,5 +1,4 @@
 require "spec_helper"
-Upsteem::Deploy::SpecHelperLoader.require_shared_examples_for("exception_raiser")
 
 describe Upsteem::Deploy::Deployer do
   let(:task_class) { class_double("Upsteem::Deploy::Tasks::Task") }

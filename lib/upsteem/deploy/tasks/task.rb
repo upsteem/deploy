@@ -3,9 +3,9 @@ module Upsteem
     module Tasks
       # Parent class for all tasks
       class Task
-        private *delegate(:configuration, to: :environment)
-        private *delegate(:logger, :git, to: :configuration)
-        private *delegate(:target_branch, :feature_branch, to: :environment)
+        private(*delegate(:configuration, to: :environment))
+        private(*delegate(:logger, :system, :git, to: :configuration))
+        private(*delegate(:target_branch, :feature_branch, to: :environment))
 
         def run
           raise NotImplementedError, "Subclasses of Task must implement 'run' instance method"

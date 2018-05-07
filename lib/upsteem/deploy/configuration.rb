@@ -33,8 +33,23 @@ module Upsteem
       end
       memoize :logger
 
+      def system
+        Proxies::System.new
+      end
+      memoize :system
+
+      def bundler
+        Proxies::Bundler.new(system)
+      end
+      memoize :bundler
+
+      def capistrano
+        Proxies::Capistrano.new(bundler)
+      end
+      memoize :capistrano
+
       def git
-        GitProxy.new(Git.open(project_path), logger)
+        Proxies::Git.new(::Git.open(project_path), logger)
       end
       memoize :git
 
@@ -42,11 +57,6 @@ module Upsteem
         options[:gems_to_update] || []
       end
       memoize :gems_to_update
-
-      def environment_invariant_project?
-        !!options[:environment_invariant_project]
-      end
-      memoize :environment_invariant_project?
 
       private
 

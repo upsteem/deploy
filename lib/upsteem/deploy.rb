@@ -4,12 +4,13 @@ require "logger"
 require "git"
 require "fileutils"
 require "memoist"
+require "hashie"
 
 %w[
   configuration
   errors
   environment
-  git_proxy
+  proxies
   tasks
   deployer
   usage

@@ -9,6 +9,7 @@
   feature_branch_comparison
   feature_branch_syncing
   feature_branch_merging
+  capistrano_deployment
 
   feature_branch_inclusion_flow
   gems_update_flow

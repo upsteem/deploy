@@ -2,6 +2,8 @@ module Upsteem
   module Deploy
     module Tasks
       class Bundle < Task
+        private(*delegate(:bundler, to: :configuration))
+
         GEMFILE = "Gemfile".freeze
 
         def run
@@ -15,31 +17,19 @@ module Upsteem
         private
 
         def install_gems
-          system("bundle")
-          raise Errors::DeployError, "Bundle install failed" unless success?
+          bundler.install_gems
           logger.info("Bundle install OK")
         end
 
         def update_gems
           return unless configuration.gems_to_update.present?
-          configuration.gems_to_update.each do |name|
-            update_gem(name)
-          end
+          bundler.update_gems(configuration.gems_to_update)
           logger.info("Bundle update OK")
         end
 
-        def update_gem(name)
-          system("bundle update --source #{name}")
-          raise Errors::DeployError, "Bundle update of gem #{name} failed" unless success?
-        end
-
         def overwrite_gemfile_with_environment_one
-          return if configuration.environment_invariant_project?
+          return unless configuration.gems_to_update.present?
           FileUtils.cp("#{GEMFILE}.#{environment.name}", GEMFILE)
-        end
-
-        def success?
-          $?.exitstatus.zero?
         end
       end
     end

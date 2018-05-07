@@ -7,4 +7,5 @@ RSpec.configure do |config|
   config.mock_with(:rspec) do |mocks|
     mocks.verify_doubled_constant_names = true
   end
+  config.include(Upsteem::Deploy::MockingHelpers)
 end

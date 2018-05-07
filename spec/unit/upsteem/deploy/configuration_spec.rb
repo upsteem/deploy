@@ -1,5 +1,4 @@
 require "spec_helper"
-Upsteem::Deploy::SpecHelperLoader.require_shared_examples_for("exception_raiser")
 
 describe Upsteem::Deploy::Configuration do
   let(:project_path) { "/path/to/something" }
@@ -11,9 +10,18 @@ describe Upsteem::Deploy::Configuration do
   let(:custom_logger) { instance_double("Logger", "custom") }
   let(:configured_logger) { logger }
 
+  let(:system_proxy) { instance_double("Upsteem::Deploy::Proxies::System", "default") }
+  let(:custom_system_proxy) { instance_double("Upsteem::Deploy::Proxies::System", "custom") }
+
+  let(:bundler_proxy) { instance_double("Upsteem::Deploy::Proxies::Bundler", "default") }
+  let(:custom_bundler_proxy) { instance_double("Upsteem::Deploy::Proxies::Bundler", "custom") }
+
+  let(:capistrano_proxy) { instance_double("Upsteem::Deploy::Proxies::Capistrano", "default") }
+  let(:custom_capistrano_proxy) { instance_double("Upsteem::Deploy::Proxies::Capistrano", "custom") }
+
   let(:git_core) { instance_double("Git") }
-  let(:git_proxy) { instance_double("Upsteem::Deploy::GitProxy", "default") }
-  let(:custom_git_proxy) { instance_double("Upsteem::Deploy::GitProxy", "custom") }
+  let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::Git", "default") }
+  let(:custom_git_proxy) { instance_double("Upsteem::Deploy::Proxies::Git", "custom") }
 
   shared_context "default instance" do
     let(:configuration) { described_class.set_up(project_path_as_arg) }
@@ -26,8 +34,17 @@ describe Upsteem::Deploy::Configuration do
   before do
     allow(File).to receive(:directory?).with(project_path).and_return(project_path_is_directory)
     allow(Logger).to receive(:new).with(STDOUT).once.and_return(logger)
-    allow(Git).to receive(:open).with(project_path).once.and_return(git_core)
-    allow(Upsteem::Deploy::GitProxy).to receive(:new).once.with(git_core, configured_logger).and_return(git_proxy)
+    allow(::Git).to receive(:open).with(project_path).once.and_return(git_core)
+    allow(Upsteem::Deploy::Proxies::System).to receive(:new).once.and_return(system_proxy)
+    allow(Upsteem::Deploy::Proxies::Bundler).to receive(:new).with(
+      system_proxy
+    ).once.and_return(bundler_proxy)
+    allow(Upsteem::Deploy::Proxies::Capistrano).to receive(:new).with(
+      bundler_proxy
+    ).once.and_return(capistrano_proxy)
+    allow(Upsteem::Deploy::Proxies::Git).to receive(:new).once.with(
+      git_core, configured_logger
+    ).and_return(git_proxy)
   end
 
   describe ".new" do
@@ -179,6 +196,66 @@ describe Upsteem::Deploy::Configuration do
     end
   end
 
+  describe "#system" do
+    subject do
+      configuration.system
+      configuration.system
+    end
+
+    context "when options not given" do
+      include_context "default instance"
+
+      it { is_expected.to eq(system_proxy) }
+    end
+
+    context "when options given" do
+      let(:options) { { system: custom_system_proxy } }
+      include_context "custom instance"
+
+      it { is_expected.to eq(system_proxy) }
+    end
+  end
+
+  describe "#bundler" do
+    subject do
+      configuration.bundler
+      configuration.bundler
+    end
+
+    context "when options not given" do
+      include_context "default instance"
+
+      it { is_expected.to eq(bundler_proxy) }
+    end
+
+    context "when options given" do
+      let(:options) { { bundler: custom_bundler_proxy } }
+      include_context "custom instance"
+
+      it { is_expected.to eq(bundler_proxy) }
+    end
+  end
+
+  describe "#capistrano" do
+    subject do
+      configuration.capistrano
+      configuration.capistrano
+    end
+
+    context "when options not given" do
+      include_context "default instance"
+
+      it { is_expected.to eq(capistrano_proxy) }
+    end
+
+    context "when options given" do
+      let(:options) { { capistrano: custom_capistrano_proxy } }
+      include_context "custom instance"
+
+      it { is_expected.to eq(capistrano_proxy) }
+    end
+  end
+
   describe "#git" do
     subject do
       configuration.git
@@ -213,31 +290,6 @@ describe Upsteem::Deploy::Configuration do
       include_context "custom instance"
 
       it { is_expected.to eq(%w[gem1 gem2 gem3]) }
-    end
-  end
-
-  describe "#environment_invariant_project?" do
-    subject { configuration.environment_invariant_project? }
-
-    context "when options not given" do
-      include_context "default instance"
-
-      it { is_expected.to eq(false) }
-    end
-
-    context "when options given" do
-      shared_examples_for "option reader" do |given_value, expected_result|
-        let(:options) { { environment_invariant_project: given_value } }
-
-        it { is_expected.to eq(expected_result) }
-      end
-
-      include_context "custom instance"
-
-      it_behaves_like "option reader", true, true
-      it_behaves_like "option reader", false, false
-      it_behaves_like "option reader", "asdf", true
-      it_behaves_like "option reader", nil, false
     end
   end
 end

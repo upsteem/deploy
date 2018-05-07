@@ -3,12 +3,11 @@ Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_and_examples_for("unit
 
 describe Upsteem::Deploy::Tasks::Task do
   include_context "setup for tasks"
+  include_context "examples for tasks"
 
   describe "#run" do
-    subject { task.run }
-
     it_behaves_like(
-      "exception raiser", NotImplementedError,
+      "error run", NotImplementedError,
       "Subclasses of Task must implement 'run' instance method"
     )
   end
