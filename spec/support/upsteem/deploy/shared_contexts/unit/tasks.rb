@@ -35,13 +35,13 @@ shared_context "setup for tasks" do
   def configure_expectation_for_sub_task(label)
     sub_task = sub_task_helper(label)
 
-    if sub_task.error
+    if sub_task[:error]
       expect_to_receive_exactly_ordered_and_raise(
-        sub_task.occurrences, sub_task.task, :run, sub_task.error
+        sub_task[:occurrences], sub_task[:task], :run, sub_task[:error]
       )
     else
       expect_to_receive_exactly_ordered_and_return(
-        sub_task.occurrences, sub_task.task, :run, true
+        sub_task[:occurrences], sub_task[:task], :run, true
       )
     end
   end
@@ -53,17 +53,17 @@ shared_context "setup for tasks" do
     let("#{label}_error") { nil }
 
     let(label) do
-      Hashie::Mash.new(
+      {
         task: sub_task_helper(label, :task),
         options: sub_task_helper(label, :options),
         occurrences: sub_task_helper(label, :occurrences),
         error: sub_task_helper(label, :error)
-      )
+      }
     end
 
     before do
       sub_task = sub_task_helper(label)
-      allow(klass).to receive(:new).with(environment, sub_task.options).and_return(sub_task.task)
+      allow(klass).to receive(:new).with(environment, sub_task[:options]).and_return(sub_task[:task])
     end
   end
 

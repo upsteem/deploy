@@ -4,7 +4,6 @@ require "logger"
 require "git"
 require "fileutils"
 require "memoist"
-require "hashie"
 
 %w[
   configuration

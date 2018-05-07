@@ -17,7 +17,7 @@ module Upsteem
         end
 
         def feature_branch
-          environment.feature_branch || raise("Feature branch not supplied with environment")
+          environment.feature_branch || raise(ArgumentError, "Feature branch not supplied with environment")
         end
       end
     end

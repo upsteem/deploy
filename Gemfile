@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in upsteem-core.gemspec
+# Specify your gem's dependencies in upsteem_deploy.gemspec
 gemspec
 
 group :development do
@@ -8,6 +8,5 @@ group :development do
 end
 
 group :test do
-  gem "hashie"
   gem "rspec"
 end

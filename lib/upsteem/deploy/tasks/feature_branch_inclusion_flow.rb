@@ -14,6 +14,8 @@ module Upsteem
           true
         end
 
+        private
+
         def compare_feature_branch_between_repositories
           run_sub_task(FeatureBranchComparison)
         end
