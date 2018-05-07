@@ -41,7 +41,9 @@ describe Upsteem::Deploy::Tasks::TargetBranchUpload do
   describe "#run" do
     before do
       expect_logger_info("Committing to #{target_branch} branch", committing_occurrences)
-      expect_logger_info("Message: #{commit_message.inspect}, options: #{commit_options.inspect}")
+      expect_logger_info(
+        "Message: #{commit_message.inspect}, options: #{commit_options.inspect}", committing_occurrences
+      )
       expect_git_commit
       expect_logger_info("Result: #{commit_result}", committing_occurrences)
       expect_logger_info("Pushing to origin/#{target_branch}", pushing_occurrences)
@@ -51,5 +53,21 @@ describe Upsteem::Deploy::Tasks::TargetBranchUpload do
     end
 
     it_behaves_like "normal run"
+
+    context "when current branch is not target branch" do
+      let(:current_branch) { "someotherbranch" }
+
+      let(:predefined_exception) do
+        [
+          Upsteem::Deploy::Errors::DeployError,
+          "Expected current branch to be #{target_branch}, but it was #{current_branch}"
+        ]
+      end
+
+      let(:committing_occurrences) { 0 }
+      let(:pushing_occurrences) { 0 }
+
+      it_behaves_like "error run"
+    end
   end
 end
