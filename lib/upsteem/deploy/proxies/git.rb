@@ -3,9 +3,9 @@ module Upsteem
     module Proxies
       class Git
         def initialize(git, logger)
-          @git = git 
+          @git = git
           @logger = logger
-        end 
+        end
 
         def current_branch
           git.current_branch
@@ -14,15 +14,27 @@ module Upsteem
         def status
           git.status
         rescue Git::GitExecuteError
-          raise Errors::DeployError, "Error on checking git status"
+          raise Errors::DeployError, "Error on git status"
         end
 
-        def create_merge_commit(branch, custom_args = []) 
+        def checkout(branch)
+          git.checkout(branch)
+        rescue Git::GitExecuteError
+          raise Errors::DeployError, "Error on git checkout"
+        end
+
+        def pull(repository, branch)
+          git.pull(repository, branch)
+        rescue Git::GitExecuteError
+          raise Errors::DeployError, "Error on git pull"
+        end
+
+        def create_merge_commit(branch, custom_args = [])
           args = [branch, "--no-commit", "--no-ff"] + custom_args
           logger.info(
             "Starting to create a merge commit from #{branch} to #{current_branch}. " \
             "Arguments: #{args[1...args.length].inspect}"
-          )   
+          )
           result = git.lib.send(:command, "merge", args)
           logger.info(result)
           abort_merge_and_fail_deploy!(branch) unless git.lib.unmerged.empty?
@@ -32,22 +44,22 @@ module Upsteem
           err_msg = e.message.to_s
           abort_merge_and_fail_deploy!(branch, err_msg) if err_msg =~ /conflict/i
           raise DeployError, "Error on creating merge commit from #{branch} to #{current_branch}"
-        end 
+        end
 
-        def create_merge_commit_from_origin(branch, custom_args = []) 
+        def create_merge_commit_from_origin(branch, custom_args = [])
           create_merge_commit("origin/#{branch}", custom_args)
-        end 
+        end
 
         def abort_merge_and_fail_deploy!(branch, err_msg = nil)
           logger.info(err_msg) if err_msg
           logger.info(
             "There are merge conflicts between #{git.current_branch} and #{branch} - " \
             "please merge manually!"
-          )   
+          )
           logger.info("Aborting conflicting merge")
           abort_merge
           raise DeployError, "Merge conflicts must be resolved manually!"
-        end 
+        end
 
         def abort_merge
           logger.info("Starting to abort a merge")

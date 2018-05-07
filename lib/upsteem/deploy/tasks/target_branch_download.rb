@@ -3,10 +3,24 @@ module Upsteem
     module Tasks
       class TargetBranchDownload < Task
         def run
-          git.checkout(target_branch)
-          git.pull("origin", target_branch)
-          logger.info("Checked out #{target_branch} and pulled in remote changes.")
+          checkout
+          pull
+          logger.info("Target branch download OK")
           true
+        end
+
+        private
+
+        def checkout
+          logger.info("Checking out #{target_branch} branch")
+          result = git.checkout(target_branch)
+          logger.info("Result: #{result}")
+        end
+
+        def pull
+          logger.info("Pulling in remote changes")
+          result = git.pull("origin", target_branch)
+          logger.info("Result: #{result}")
         end
       end
     end
