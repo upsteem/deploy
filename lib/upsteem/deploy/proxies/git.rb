@@ -9,6 +9,8 @@ module Upsteem
 
         def current_branch
           git.current_branch
+        rescue Git::GitExecuteError
+          raise Errors::DeployError, "Error on git current branch lookup"
         end
 
         def status
@@ -72,28 +74,29 @@ module Upsteem
         end
 
         def commit(message, options = {})
-          logger.info(
-            "Starting a commit to #{git.current_branch}. " \
-            "Message: #{message.inspect}, options: #{options.inspect}"
-          )
-          result = git.commit(message, options)
-          logger.info(result)
-          logger.info("Commit successful")
-          result
+          git.commit(message, options)
         rescue Git::GitExecuteError => e
           # Deploy without committing anything new is a valid use case
           # that should not end with an exception.
-          err_msg = e.message.to_s
-          if err_msg =~ /nothing to commit/i
-            logger.info(err_msg)
-            return err_msg
-          end
-          raise DeployError, "Error on commit" # other, unexpected commit error
+          err_msg = match_execution_error(e, /nothing to commit/i)
+          return err_msg if err_msg
+          raise DeployError, "Error on git commit" # other, unexpected commit error
+        end
+
+        def push(remote, branch)
+          git.push(remote, branch)
+        rescue Git::GitExecuteError
+          raise DeployError, "Error on git push"
         end
 
         private
 
         attr_reader :git, :logger
+
+        def match_execution_error(error, regex)
+          err_msg = error.message.to_s
+          err_msg =~ regex ? err_msg : nil
+        end
 
         # Delegate method calls to wrapped git object by default and add some logging.
         def method_missing(method_name, *arguments)

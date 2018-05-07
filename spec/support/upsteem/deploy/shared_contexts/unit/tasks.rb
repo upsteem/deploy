@@ -12,6 +12,11 @@ shared_context "setup for tasks" do
     let(:feature_branch) { nil }
   end
 
+  shared_context "task with options" do
+    let(:task_options) { {} }
+    let(:task) { described_class.new(environment, task_options) }
+  end
+
   def allow_configuration_from_environment
     allow(environment).to receive(:configuration).and_return(configuration)
   end
