@@ -31,6 +31,12 @@ module Upsteem
           raise Errors::DeployError, "Error on git pull"
         end
 
+        def up_to_date?(branch)
+          git.log.between("origin/#{branch}", branch).size.zero?
+        rescue Git::GitExecuteError
+          raise Errors::DeployError, "Error while comparing branch #{branch} with remote"
+        end
+
         def create_merge_commit(branch, custom_args = [])
           args = [branch, "--no-commit", "--no-ff"] + custom_args
           logger.info(
