@@ -4,19 +4,47 @@ module Upsteem
       class FeatureBranchSyncing < Task
         include FeatureBranchDependent
 
+        REMOTE = "origin".freeze
+        MASTER = "#{REMOTE}/master".freeze
+
         def run
-          git.checkout(feature_branch)
-          git.create_merge_commit_from_origin("master")
-          git.commit("Sync #{git.current_branch} with master", all: true)
-          git.push("origin", feature_branch)
-          syncing_successful
+          logger.info("Starting to sync #{feature_branch} with #{master}")
+          checkout
+          create_merge_commit
+          commit
+          push
+          logger.info("Syncing successful")
+          true
+        rescue Errors::MergeConflict => e
+          handle_merge_conflict(e)
         end
 
         private
 
-        def syncing_successful
-          logger.info("Successfully synced #{git.current_branch} with master")
-          true
+        def master
+          MASTER
+        end
+
+        def checkout
+          git.checkout(feature_branch)
+        end
+
+        def create_merge_commit
+          git.create_merge_commit(master)
+        end
+
+        def commit
+          git.commit("Sync #{feature_branch} with #{MASTER}", all: true)
+        end
+
+        def push
+          git.push(REMOTE, feature_branch)
+        end
+
+        def handle_merge_conflict(error)
+          logger.error("Syncing failed due to merge conflict")
+          git.abort_merge
+          raise error
         end
       end
     end

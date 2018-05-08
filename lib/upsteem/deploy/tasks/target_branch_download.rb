@@ -5,22 +5,17 @@ module Upsteem
         def run
           checkout
           pull
-          logger.info("Target branch download OK")
           true
         end
 
         private
 
         def checkout
-          logger.info("Checking out #{target_branch} branch")
-          result = git.checkout(target_branch)
-          logger.info("Result: #{result}")
+          git.checkout(target_branch)
         end
 
         def pull
-          logger.info("Pulling in remote changes")
-          result = git.pull("origin", target_branch)
-          logger.info("Result: #{result}")
+          git.pull("origin", target_branch)
         end
       end
     end

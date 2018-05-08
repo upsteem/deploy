@@ -1,3 +1,5 @@
+Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_for("unit/logger")
+
 shared_context "setup for tasks" do
   let(:environment_name) { "someenv" }
   let(:feature_branch) { "DEV-123" }
@@ -73,18 +75,10 @@ shared_context "setup for tasks" do
   end
 
   shared_context "logging" do
-    let(:logger) { instance_double("Logger") }
+    include_context "setup for logger"
 
     def allow_logger_from_configuration
       allow(configuration).to receive(:logger).and_return(logger)
-    end
-
-    def expect_logger_action(name, message, times = 1)
-      expect_to_receive_exactly_ordered(times, logger, name, message)
-    end
-
-    def expect_logger_info(message, times = 1)
-      expect_logger_action(:info, message, times)
     end
 
     before do
@@ -143,7 +137,7 @@ shared_context "setup for tasks" do
   end
 
   shared_context "git operations" do
-    let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::Git") }
+    let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit") }
 
     def allow_git_proxy_from_configuration
       allow(configuration).to receive(:git).and_return(git_proxy)

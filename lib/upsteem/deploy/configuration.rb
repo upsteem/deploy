@@ -49,7 +49,7 @@ module Upsteem
       memoize :capistrano
 
       def git
-        Proxies::Git.new(::Git.open(project_path), logger)
+        Proxies::VerboseGit.new(project_path, logger)
       end
       memoize :git
 

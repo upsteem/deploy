@@ -19,9 +19,8 @@ describe Upsteem::Deploy::Configuration do
   let(:capistrano_proxy) { instance_double("Upsteem::Deploy::Proxies::Capistrano", "default") }
   let(:custom_capistrano_proxy) { instance_double("Upsteem::Deploy::Proxies::Capistrano", "custom") }
 
-  let(:git_core) { instance_double("Git") }
-  let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::Git", "default") }
-  let(:custom_git_proxy) { instance_double("Upsteem::Deploy::Proxies::Git", "custom") }
+  let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit", "default") }
+  let(:custom_git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit", "custom") }
 
   shared_context "default instance" do
     let(:configuration) { described_class.set_up(project_path_as_arg) }
@@ -34,7 +33,6 @@ describe Upsteem::Deploy::Configuration do
   before do
     allow(File).to receive(:directory?).with(project_path).and_return(project_path_is_directory)
     allow(Logger).to receive(:new).with(STDOUT).once.and_return(logger)
-    allow(::Git).to receive(:open).with(project_path).once.and_return(git_core)
     allow(Upsteem::Deploy::Proxies::System).to receive(:new).once.and_return(system_proxy)
     allow(Upsteem::Deploy::Proxies::Bundler).to receive(:new).with(
       system_proxy
@@ -42,8 +40,8 @@ describe Upsteem::Deploy::Configuration do
     allow(Upsteem::Deploy::Proxies::Capistrano).to receive(:new).with(
       bundler_proxy
     ).once.and_return(capistrano_proxy)
-    allow(Upsteem::Deploy::Proxies::Git).to receive(:new).once.with(
-      git_core, configured_logger
+    allow(Upsteem::Deploy::Proxies::VerboseGit).to receive(:new).once.with(
+      project_path, logger
     ).and_return(git_proxy)
   end
 
