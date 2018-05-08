@@ -25,11 +25,7 @@ shared_context "examples for git proxy" do
       [Upsteem::Deploy::Errors::DeployError, re_raised_message || predefined_exception_message]
     end
 
-    def expect_nested_method_call
-      expect_to_receive_exactly_ordered_and_raise(
-        1, nested_receiver, nested_method, nested_exception, *nested_method_arguments
-      )
-    end
+    include_context "nested method call error"
 
     # Anything after the failing call should not run.
     def expect_after_nested_method_call; end
@@ -131,6 +127,43 @@ shared_context "examples for git proxy" do
   end
 
   shared_examples_for "push instance method in Proxies::Git" do
+    it_behaves_like "nested result returner"
+    it_behaves_like "nested error re-raiser"
+  end
+
+  shared_examples_for "create_merge_commit instance method in Proxies::Git" do
+    it_behaves_like "nested result returner"
+    it_behaves_like "nested error re-raiser"
+
+    context "when unmerged files left after merge" do
+      let(:unmerged) { ["/path/to/something"] }
+      let(:predefined_exception) do
+        [Upsteem::Deploy::Errors::MergeConflict, "Unmerged changes detected: #{unmerged.inspect}"]
+      end
+
+      def expect_after_nested_method_call; end
+
+      it_behaves_like "exception raiser"
+    end
+
+    context "when nested error contains 'conflict' message" do
+      include_context "nested method call error"
+
+      let(:nested_exception) do
+        [Git::GitExecuteError, "CONFLICT."]
+      end
+
+      let(:predefined_exception) do
+        [Upsteem::Deploy::Errors::MergeConflict, "Merge commit creation failed due to conflicts"]
+      end
+
+      def expect_after_nested_method_call; end
+
+      it_behaves_like "exception raiser"
+    end
+  end
+
+  shared_examples_for "abort_merge instance method in Proxies::Git" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser"
   end

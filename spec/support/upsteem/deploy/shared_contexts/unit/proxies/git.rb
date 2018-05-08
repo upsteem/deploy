@@ -19,6 +19,14 @@ shared_context "setup for git proxy" do
     )
   end
 
+  shared_context "nested method call error" do
+    def expect_nested_method_call
+      expect_to_receive_exactly_ordered_and_raise(
+        1, nested_receiver, nested_method, nested_exception, *nested_method_arguments
+      )
+    end
+  end
+
   def configure_method_specific_before_hooks
     expect_before_nested_method_call
     expect_nested_method_call
@@ -133,5 +141,51 @@ shared_context "setup for git proxy" do
     let(:nested_result) { "Successfully pushed changes" }
 
     subject { git_proxy.push(remote, branch) }
+  end
+
+  shared_context "setup for create_merge_commit" do
+    let(:git_lib) { instance_double("Git::Lib") }
+    let(:branch) { "somebranch" }
+    let(:current_branch) { "currentbranch" }
+    let(:unmerged) { [] }
+    let(:references_to_unmerged) { 1 }
+    let(:predefined_exception_message) do
+      "Error while creating merge commit from #{branch} to #{current_branch}"
+    end
+
+    let(:nested_receiver) { git_lib }
+    let(:nested_method) { :command }
+    let(:nested_method_arguments) { ["merge", [branch, "--no-commit", "--no-ff"]] }
+    let(:nested_result) { "Merge went well, stopping before committing" }
+
+    def expect_nested_method_call
+      super
+      expect_to_receive_exactly_ordered_and_return(
+        references_to_unmerged, git_lib, :unmerged, unmerged
+      )
+    end
+
+    subject { git_proxy.create_merge_commit(branch) }
+
+    before do
+      allow(git).to receive(:current_branch).and_return(current_branch)
+      allow(git).to receive(:lib).and_return(git_lib)
+    end
+  end
+
+  shared_context "setup for abort_merge" do
+    let(:git_lib) { instance_double("Git::Lib") }
+    let(:predefined_exception_message) { "Error while aborting the merge" }
+
+    let(:nested_receiver) { git_lib }
+    let(:nested_method) { :command }
+    let(:nested_method_arguments) { ["merge", ["--abort"]] }
+    let(:nested_result) { "Merge aborted" }
+
+    subject { git_proxy.abort_merge }
+
+    before do
+      allow(git).to receive(:lib).and_return(git_lib)
+    end
   end
 end

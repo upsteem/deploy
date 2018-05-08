@@ -22,6 +22,16 @@ module Upsteem
           super.tap { |result| log_result(result, "push") }
         end
 
+        def create_merge_commit(branch)
+          logger.info("Starting to create a merge commit from #{branch} to #{current_branch}")
+          super.tap { |result| log_result(result, "create_merge_commit") }
+        end
+
+        def abort_merge
+          logger.info("Starting to abort the merge")
+          super.tap { |result| log_result(result, "abort_merge") }
+        end
+
         private
 
         attr_reader :logger

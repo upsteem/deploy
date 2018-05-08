@@ -63,46 +63,23 @@ module Upsteem
           raise Errors::DeployError, "Error while pushing to #{remote}/#{branch}"
         end
 
-        def create_merge_commit(branch, custom_args = [])
-          args = [branch, "--no-commit", "--no-ff"] + custom_args
-          logger.info(
-            "Starting to create a merge commit from #{branch} to #{current_branch}. " \
-            "Arguments: #{args[1...args.length].inspect}"
-          )
+        def create_merge_commit(branch)
+          args = [branch, "--no-commit", "--no-ff"]
           result = git.lib.send(:command, "merge", args)
-          logger.info(result)
-          abort_merge_and_fail_deploy!(branch) unless git.lib.unmerged.empty?
-          logger.info("Successfully created merge commit from #{branch} to #{current_branch}")
+          unmerged = git.lib.unmerged
+          raise Errors::MergeConflict, "Unmerged changes detected: #{unmerged.inspect}" unless unmerged.empty?
           result
-        rescue Git::GitExecuteError => e
-          err_msg = e.message.to_s
-          abort_merge_and_fail_deploy!(branch, err_msg) if err_msg =~ /conflict/i
-          raise DeployError, "Error on creating merge commit from #{branch} to #{current_branch}"
-        end
-
-        def create_merge_commit_from_origin(branch, custom_args = [])
-          create_merge_commit("origin/#{branch}", custom_args)
-        end
-
-        def abort_merge_and_fail_deploy!(branch, err_msg = nil)
-          logger.info(err_msg) if err_msg
-          logger.info(
-            "There are merge conflicts between #{git.current_branch} and #{branch} - " \
-            "please merge manually!"
-          )
-          logger.info("Aborting conflicting merge")
-          abort_merge
-          raise DeployError, "Merge conflicts must be resolved manually!"
+        rescue ::Git::GitExecuteError => e
+          err_msg = match_execution_error(e, /conflict/i)
+          raise Errors::MergeConflict, "Merge commit creation failed due to conflicts" if err_msg
+          # Other, unexpected commit error:
+          raise Errors::DeployError, "Error while creating merge commit from #{branch} to #{current_branch}"
         end
 
         def abort_merge
-          logger.info("Starting to abort a merge")
-          result = git.lib.send(:command, "merge", ["--abort"])
-          logger.info(result)
-          logger.info("Merge aborted")
-          result
-        rescue Git::GitExecuteError
-          raise DeployError, "Error on aborting the merge"
+          git.lib.send(:command, "merge", ["--abort"])
+        rescue ::Git::GitExecuteError
+          raise Errors::DeployError, "Error while aborting the merge"
         end
 
         private

@@ -94,4 +94,22 @@ describe Upsteem::Deploy::Proxies::VerboseGit do
 
     it_behaves_like "push instance method in Proxies::Git"
   end
+
+  describe "#create_merge_commit" do
+    include_context "setup for create_merge_commit"
+
+    let(:messages_before) { ["Starting to create a merge commit from #{branch} to #{current_branch}"] }
+    let(:messages_after) { ["Result (create_merge_commit): #{nested_result}"] }
+
+    it_behaves_like "create_merge_commit instance method in Proxies::Git"
+  end
+
+  describe "#abort_merge" do
+    include_context "setup for abort_merge"
+
+    let(:messages_before) { ["Starting to abort the merge"] }
+    let(:messages_after) { ["Result (abort_merge): #{nested_result}"] }
+
+    it_behaves_like "abort_merge instance method in Proxies::Git"
+  end
 end
