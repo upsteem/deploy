@@ -12,7 +12,10 @@ describe Upsteem::Deploy::Environment do
   let(:git) { instance_double("Upsteem::Deploy::Proxies::Git") }
   let(:bundler) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
   let(:capistrano) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
-  let(:env_gems_to_update) { %w[foo bar baz] }
+
+  let(:shared_gems_to_update) { %w[foo] }
+  let(:env_gems_to_update) { %w[bar baz] }
+  let(:gems_to_update) { %w[foo bar baz] }
 
   let(:configuration_arg) { configuration }
   let(:name_arg) { name }
@@ -171,12 +174,30 @@ describe Upsteem::Deploy::Environment do
     it_behaves_like "delegator to configuration"
   end
 
-  describe "#env_gems_to_update" do
-    let(:nested_method) { :env_gems_to_update }
-    let(:nested_result) { env_gems_to_update }
+  describe "#gemfile_overwrite_needed?" do
+    before do
+      allow(configuration).to receive(:env_gems_to_update).and_return(env_gems_to_update)
+    end
 
-    subject { environment.env_gems_to_update }
+    subject { environment.gemfile_overwrite_needed? }
 
-    it_behaves_like "delegator to configuration"
+    it { is_expected.to eq(true) }
+
+    context "when there are no environment specific gems to update" do
+      let(:env_gems_to_update) { [] }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
+  describe "#gems_to_update" do
+    before do
+      allow(configuration).to receive(:shared_gems_to_update).and_return(shared_gems_to_update)
+      allow(configuration).to receive(:env_gems_to_update).and_return(env_gems_to_update)
+    end
+
+    subject { environment.gems_to_update }
+
+    it { is_expected.to eq(gems_to_update) }
   end
 end

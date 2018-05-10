@@ -53,6 +53,14 @@ module Upsteem
       end
       memoize :git
 
+      # List of gems that do not have environment-specific variations.
+      def shared_gems_to_update
+        options[:shared_gems_to_update] || []
+      end
+      memoize :shared_gems_to_update
+
+      # List of gems that are defined for each environment separately
+      # in Gemfile.{environment.name}
       def env_gems_to_update
         options[:env_gems_to_update] || []
       end
