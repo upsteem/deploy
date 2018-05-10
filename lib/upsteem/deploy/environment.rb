@@ -37,8 +37,8 @@ module Upsteem
         configuration.capistrano
       end
 
-      def gems_to_update
-        configuration.gems_to_update
+      def env_gems_to_update
+        configuration.env_gems_to_update
       end
 
       private

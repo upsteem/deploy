@@ -20,13 +20,13 @@ module Upsteem
         end
 
         def update_gems
-          return unless environment.gems_to_update.present?
-          bundler.update_gems(environment.gems_to_update)
+          return unless environment.env_gems_to_update.present?
+          bundler.update_gems(environment.env_gems_to_update)
           logger.info("Bundle update OK")
         end
 
         def overwrite_gemfile_with_environment_one
-          return unless environment.gems_to_update.present?
+          return unless environment.env_gems_to_update.present?
           FileUtils.cp("#{GEMFILE}.#{environment.name}", GEMFILE)
         end
 

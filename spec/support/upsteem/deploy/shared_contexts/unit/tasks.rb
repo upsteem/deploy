@@ -94,16 +94,16 @@ shared_context "setup for tasks" do
   end
 
   shared_context "gems to update" do
-    let(:gems_to_update) { %w[foo bar baz] }
+    let(:env_gems_to_update) { %w[foo bar baz] }
 
-    def allow_gems_to_update_from_environment
+    def allow_env_gems_to_update_from_environment
       allow(environment).to receive(
-        :gems_to_update
-      ).and_return(gems_to_update)
+        :env_gems_to_update
+      ).and_return(env_gems_to_update)
     end
 
     before do
-      allow_gems_to_update_from_environment
+      allow_env_gems_to_update_from_environment
     end
   end
 

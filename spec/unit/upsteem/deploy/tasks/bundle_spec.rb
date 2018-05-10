@@ -29,7 +29,7 @@ describe Upsteem::Deploy::Tasks::Bundle do
 
     def expect_bundle_update
       expect_to_receive_exactly_ordered(
-        bundle_update_occurrences, bundler_proxy, :update_gems, gems_to_update
+        bundle_update_occurrences, bundler_proxy, :update_gems, env_gems_to_update
       )
     end
 
@@ -45,7 +45,7 @@ describe Upsteem::Deploy::Tasks::Bundle do
     it_behaves_like "normal run"
 
     shared_examples_for "no gems to update" do |absence|
-      let(:gems_to_update) { absence }
+      let(:env_gems_to_update) { absence }
       let(:gemfile_overwrite_occurrences) { 0 }
       let(:bundle_update_occurrences) { 0 }
       let(:bundle_update_success_occurrences) { 0 }

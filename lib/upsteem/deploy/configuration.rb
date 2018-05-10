@@ -53,10 +53,10 @@ module Upsteem
       end
       memoize :git
 
-      def gems_to_update
-        options[:gems_to_update] || []
+      def env_gems_to_update
+        options[:env_gems_to_update] || []
       end
-      memoize :gems_to_update
+      memoize :env_gems_to_update
 
       private
 

@@ -12,7 +12,7 @@ describe Upsteem::Deploy::Environment do
   let(:git) { instance_double("Upsteem::Deploy::Proxies::Git") }
   let(:bundler) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
   let(:capistrano) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
-  let(:gems_to_update) { %w[foo bar baz] }
+  let(:env_gems_to_update) { %w[foo bar baz] }
 
   let(:configuration_arg) { configuration }
   let(:name_arg) { name }
@@ -171,11 +171,11 @@ describe Upsteem::Deploy::Environment do
     it_behaves_like "delegator to configuration"
   end
 
-  describe "#gems_to_update" do
-    let(:nested_method) { :gems_to_update }
-    let(:nested_result) { gems_to_update }
+  describe "#env_gems_to_update" do
+    let(:nested_method) { :env_gems_to_update }
+    let(:nested_result) { env_gems_to_update }
 
-    subject { environment.gems_to_update }
+    subject { environment.env_gems_to_update }
 
     it_behaves_like "delegator to configuration"
   end
