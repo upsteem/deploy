@@ -1,5 +1,4 @@
 require "active_support/core_ext/string"
-require "active_support/core_ext/module/delegation"
 require "logger"
 require "git"
 require "fileutils"
