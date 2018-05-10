@@ -95,6 +95,13 @@ shared_context "setup for tasks" do
 
   shared_context "gems to update" do
     let(:gems_to_update) { %w[foo bar baz] }
+    let(:gemfile_overwrite_needed) { true }
+
+    def allow_gemfile_overwrite_necessity_checking_from_environment
+      allow(environment).to receive(
+        :gemfile_overwrite_needed?
+      ).and_return(gemfile_overwrite_needed)
+    end
 
     def allow_gems_to_update_from_environment
       allow(environment).to receive(
@@ -104,6 +111,7 @@ shared_context "setup for tasks" do
 
     before do
       allow_gems_to_update_from_environment
+      allow_gemfile_overwrite_necessity_checking_from_environment
     end
   end
 

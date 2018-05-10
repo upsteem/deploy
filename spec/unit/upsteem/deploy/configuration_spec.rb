@@ -274,8 +274,8 @@ describe Upsteem::Deploy::Configuration do
     end
   end
 
-  describe "#gems_to_update" do
-    subject { configuration.gems_to_update }
+  describe "#shared_gems_to_update" do
+    subject { configuration.shared_gems_to_update }
 
     context "when options not given" do
       include_context "default instance"
@@ -284,7 +284,24 @@ describe Upsteem::Deploy::Configuration do
     end
 
     context "when options given" do
-      let(:options) { { gems_to_update: %w[gem1 gem2 gem3] } }
+      let(:options) { { shared_gems_to_update: %w[gem1 gem2 gem3] } }
+      include_context "custom instance"
+
+      it { is_expected.to eq(%w[gem1 gem2 gem3]) }
+    end
+  end
+
+  describe "#env_gems_to_update" do
+    subject { configuration.env_gems_to_update }
+
+    context "when options not given" do
+      include_context "default instance"
+
+      it { is_expected.to eq([]) }
+    end
+
+    context "when options given" do
+      let(:options) { { env_gems_to_update: %w[gem1 gem2 gem3] } }
       include_context "custom instance"
 
       it { is_expected.to eq(%w[gem1 gem2 gem3]) }
