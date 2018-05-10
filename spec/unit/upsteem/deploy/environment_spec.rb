@@ -7,6 +7,13 @@ describe Upsteem::Deploy::Environment do
   let(:supported) { true }
   let(:target_branch) { "master" }
 
+  let(:project_path) { "/path/to/project" }
+  let(:logger) { instance_double("Logger") }
+  let(:git) { instance_double("Upsteem::Deploy::Proxies::Git") }
+  let(:bundler) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
+  let(:capistrano) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
+  let(:gems_to_update) { %w[foo bar baz] }
+
   let(:configuration_arg) { configuration }
   let(:name_arg) { name }
   let(:feature_branch_arg) { feature_branch }
@@ -15,6 +22,14 @@ describe Upsteem::Deploy::Environment do
     described_class.set_up(
       configuration_arg, name_arg, feature_branch_arg
     )
+  end
+
+  shared_examples_for "delegator to configuration" do
+    before do
+      allow(configuration).to receive(nested_method).and_return(nested_result)
+    end
+
+    it { is_expected.to eq(nested_result) }
   end
 
   before do
@@ -42,10 +57,6 @@ describe Upsteem::Deploy::Environment do
 
     shared_examples_for "instance returner" do
       it { is_expected.to be_instance_of(described_class) }
-
-      it "sets and exposes configuration" do
-        expect(subject.configuration).to eq(configuration)
-      end
 
       it "sets and exposes name" do
         expect(subject.name).to eq(name)
@@ -113,5 +124,59 @@ describe Upsteem::Deploy::Environment do
     end
 
     it { is_expected.to eq(target_branch) }
+  end
+
+  describe "#project_path" do
+    let(:nested_method) { :project_path }
+    let(:nested_result) { project_path }
+
+    subject { environment.project_path }
+
+    it_behaves_like "delegator to configuration"
+  end
+
+  describe "#logger" do
+    let(:nested_method) { :logger }
+    let(:nested_result) { logger }
+
+    subject { environment.logger }
+
+    it_behaves_like "delegator to configuration"
+  end
+
+  describe "#git" do
+    let(:nested_method) { :git }
+    let(:nested_result) { git }
+
+    subject { environment.git }
+
+    it_behaves_like "delegator to configuration"
+  end
+
+  describe "#bundler" do
+    let(:nested_method) { :bundler }
+    let(:nested_result) { bundler }
+
+    subject { environment.bundler }
+
+    it_behaves_like "delegator to configuration"
+  end
+
+  describe "#capistrano" do
+    let(:nested_method) { :capistrano }
+    let(:nested_result) { capistrano }
+
+    subject { environment.capistrano }
+
+    it_behaves_like "delegator to configuration"
+  end
+
+  describe "#gems_to_update" do
+    let(:nested_method) { :gems_to_update }
+    let(:nested_result) { gems_to_update }
+
+    subject { environment.gems_to_update }
+
+    it_behaves_like "delegator to configuration"
   end
 end
