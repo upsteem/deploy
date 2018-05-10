@@ -44,16 +44,19 @@ describe Upsteem::Deploy::Tasks::Bundle do
 
     it_behaves_like "normal run"
 
-    shared_examples_for "no gems to update" do |absence|
-      let(:gems_to_update) { absence }
+    context "when gemfile overwrite is not needed" do
+      let(:gemfile_overwrite_needed) { false }
       let(:gemfile_overwrite_occurrences) { 0 }
+
+      it_behaves_like "normal run"
+    end
+
+    context "when there are no gems to update" do
+      let(:gems_to_update) { [] }
       let(:bundle_update_occurrences) { 0 }
       let(:bundle_update_success_occurrences) { 0 }
 
       it_behaves_like "normal run"
     end
-
-    it_behaves_like "no gems to update", nil
-    it_behaves_like "no gems to update", []
   end
 end

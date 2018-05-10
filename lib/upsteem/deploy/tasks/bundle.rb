@@ -26,7 +26,7 @@ module Upsteem
         end
 
         def overwrite_gemfile_with_environment_one
-          return unless environment.gems_to_update.present?
+          return unless environment.gemfile_overwrite_needed?
           FileUtils.cp("#{GEMFILE}.#{environment.name}", GEMFILE)
         end
 
