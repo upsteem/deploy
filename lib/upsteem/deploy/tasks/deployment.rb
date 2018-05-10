@@ -47,7 +47,7 @@ module Upsteem
           feature_branch_descr = feature_branch ? " of #{feature_branch}" : ""
           logger.info(
             "Starting deployment#{feature_branch_descr} to #{environment.name} " \
-            "environment in #{configuration.project_path}"
+            "environment in #{environment.project_path}"
           )
         end
 

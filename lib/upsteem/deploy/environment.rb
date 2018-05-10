@@ -10,14 +10,40 @@ module Upsteem
       extend Setup
       extend Memoist
 
-      attr_reader :configuration, :name, :feature_branch
+      attr_reader :name, :feature_branch
 
       def target_branch
         configuration.find_target_branch(name)
       end
       memoize :target_branch
 
+      def project_path
+        configuration.project_path
+      end
+
+      def logger
+        configuration.logger
+      end
+
+      def git
+        configuration.git
+      end
+
+      def bundler
+        configuration.bundler
+      end
+
+      def capistrano
+        configuration.capistrano
+      end
+
+      def gems_to_update
+        configuration.gems_to_update
+      end
+
       private
+
+      attr_reader :configuration
 
       def initialize(configuration, name, feature_branch)
         @configuration = configuration

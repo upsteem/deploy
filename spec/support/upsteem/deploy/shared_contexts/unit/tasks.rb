@@ -5,7 +5,6 @@ shared_context "setup for tasks" do
   let(:feature_branch) { "DEV-123" }
   let(:target_branch) { "envtarget" }
 
-  let(:configuration) { instance_double("Upsteem::Deploy::Configuration") }
   let(:environment) { instance_double("Upsteem::Deploy::Environment") }
 
   let(:task) { described_class.new(environment) }
@@ -17,10 +16,6 @@ shared_context "setup for tasks" do
   shared_context "task with options" do
     let(:task_options) { {} }
     let(:task) { described_class.new(environment, task_options) }
-  end
-
-  def allow_configuration_from_environment
-    allow(environment).to receive(:configuration).and_return(configuration)
   end
 
   def allow_name_from_environment
@@ -77,79 +72,78 @@ shared_context "setup for tasks" do
   shared_context "logging" do
     include_context "setup for logger"
 
-    def allow_logger_from_configuration
-      allow(configuration).to receive(:logger).and_return(logger)
+    def allow_logger_from_environment
+      allow(environment).to receive(:logger).and_return(logger)
     end
 
     before do
-      allow_logger_from_configuration
+      allow_logger_from_environment
     end
   end
 
   shared_context "project path" do
     let(:project_path) { "/path/to/something" }
 
-    def allow_project_path_from_configuration
-      allow(configuration).to receive(:project_path).and_return(project_path)
+    def allow_project_path_from_environment
+      allow(environment).to receive(:project_path).and_return(project_path)
     end
 
     before do
-      allow_project_path_from_configuration
+      allow_project_path_from_environment
     end
   end
 
   shared_context "gems to update" do
     let(:gems_to_update) { %w[foo bar baz] }
 
-    def allow_gems_to_update_from_configuration
-      allow(configuration).to receive(
+    def allow_gems_to_update_from_environment
+      allow(environment).to receive(
         :gems_to_update
       ).and_return(gems_to_update)
     end
 
     before do
-      allow_gems_to_update_from_configuration
+      allow_gems_to_update_from_environment
     end
   end
 
   shared_context "bundler operations" do
     let(:bundler_proxy) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
 
-    def allow_bundler_proxy_from_configuration
-      allow(configuration).to receive(:bundler).and_return(bundler_proxy)
+    def allow_bundler_proxy_from_environment
+      allow(environment).to receive(:bundler).and_return(bundler_proxy)
     end
 
     before do
-      allow_bundler_proxy_from_configuration
+      allow_bundler_proxy_from_environment
     end
   end
 
   shared_context "capistrano operations" do
     let(:capistrano_proxy) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
 
-    def allow_capistrano_proxy_from_configuration
-      allow(configuration).to receive(:capistrano).and_return(capistrano_proxy)
+    def allow_capistrano_proxy_from_environment
+      allow(environment).to receive(:capistrano).and_return(capistrano_proxy)
     end
 
     before do
-      allow_capistrano_proxy_from_configuration
+      allow_capistrano_proxy_from_environment
     end
   end
 
   shared_context "git operations" do
     let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit") }
 
-    def allow_git_proxy_from_configuration
-      allow(configuration).to receive(:git).and_return(git_proxy)
+    def allow_git_proxy_from_environment
+      allow(environment).to receive(:git).and_return(git_proxy)
     end
 
     before do
-      allow_git_proxy_from_configuration
+      allow_git_proxy_from_environment
     end
   end
 
   before do
-    allow_configuration_from_environment
     allow_name_from_environment
     allow_target_branch_from_environment
     allow_feature_branch_from_environment
