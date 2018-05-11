@@ -3,8 +3,11 @@ require "logger"
 require "git"
 require "fileutils"
 require "memoist"
+require "faraday"
 
 %w[
+  models
+  builders
   configuration
   errors
   environment
