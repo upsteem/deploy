@@ -20,12 +20,38 @@ describe Upsteem::Deploy::ConfigurationSections::Factory do
   describe ".create_from_yaml_file" do
     subject { described_class.create_from_yaml_file(section_class, project_path, file_path) }
 
-    before do
+    def allow_file_join
       allow(File).to receive(:join).with(project_path, file_path).and_return(full_path)
+    end
+
+    def allow_yaml_load
       allow(YAML).to receive(:load_file).with(full_path).and_return(raw_data)
+    end
+
+    def stub_loading_from_file
+      allow_file_join
+      allow_yaml_load
       allow(section_class).to receive(:new).with(data).and_return(section)
     end
 
+    shared_context "no loading from file" do
+      def stub_loading_from_file
+        expect(File).to receive(:join).never
+        expect(YAML).to receive(:load_file).never
+      end
+    end
+
+    before do
+      stub_loading_from_file
+    end
+
     it { is_expected.to eq(section) }
+
+    context "when file path missing" do
+      include_context "no loading from file"
+      let(:file_path) { nil }
+
+      it { is_expected.to be_nil }
+    end
   end
 end

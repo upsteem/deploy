@@ -22,6 +22,9 @@ describe Upsteem::Deploy::Configuration do
   let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit", "default") }
   let(:custom_git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit", "custom") }
 
+  let(:notifications_config_file_path) { "config/notifications.yml" }
+  let(:notifications_section) { instance_double("Upsteem::Deploy::ConfigurationSections::NotificationConfiguration") }
+
   shared_context "default instance" do
     let(:configuration) { described_class.set_up(project_path_as_arg) }
   end
@@ -43,6 +46,12 @@ describe Upsteem::Deploy::Configuration do
     allow(Upsteem::Deploy::Proxies::VerboseGit).to receive(:new).once.with(
       project_path, logger
     ).and_return(git_proxy)
+    allow(Upsteem::Deploy::ConfigurationSections::Factory).to receive(
+      :create_from_yaml_file
+    ).once.with(
+      Upsteem::Deploy::ConfigurationSections::NotificationConfiguration,
+      project_path, notifications_config_file_path
+    ).and_return(notifications_section)
   end
 
   describe ".new" do
@@ -305,6 +314,27 @@ describe Upsteem::Deploy::Configuration do
       include_context "custom instance"
 
       it { is_expected.to eq(%w[gem1 gem2 gem3]) }
+    end
+  end
+
+  describe "#notifications" do
+    subject do
+      configuration.notifications
+      configuration.notifications
+    end
+
+    context "when options not given" do
+      include_context "default instance"
+      let(:notifications_config_file_path) { nil }
+
+      it { is_expected.to eq(notifications_section) }
+    end
+
+    context "when options given" do
+      let(:options) { { notifications: notifications_config_file_path } }
+      include_context "custom instance"
+
+      it { is_expected.to eq(notifications_section) }
     end
   end
 end
