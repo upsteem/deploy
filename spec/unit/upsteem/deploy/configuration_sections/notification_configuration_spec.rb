@@ -1,17 +1,28 @@
 require "spec_helper"
 
 describe Upsteem::Deploy::ConfigurationSections::NotificationConfiguration do
-  let(:url_template) { "https://deploy.notification.host.com/path/%<param1>s/new?something=%<param2>s" }
   let(:credentials) { { param1: "123", param2: "456abc", param3: "asdf" } }
+  let(:url_template) { "https://deploy.notification.host.com/path/%<param1>s/new?something=%<param2>s" }
+  let(:repository) { "https://repo.host/path/to/repo" }
+
   let(:data) do
     {
-      deploy_notification_url_template: url_template,
       credentials: credentials,
-      other: { a: :b }
+      deploy: {
+        url_template: url_template,
+        repository: repository,
+        other: { a: :b }
+      }
     }
   end
 
   let(:section) { described_class.new(data) }
+
+  shared_examples_for "unmodifiable string" do
+    it "is frozen" do
+      expect { subject << "asdf" }.to raise_error(RuntimeError, "can't modify frozen String")
+    end
+  end
 
   describe ".new" do
     subject { section }
@@ -47,5 +58,15 @@ describe Upsteem::Deploy::ConfigurationSections::NotificationConfiguration do
     let(:expected_url) { "https://deploy.notification.host.com/path/123/new?something=456abc" }
 
     it { is_expected.to eq(expected_url) }
+
+    it_behaves_like "unmodifiable string"
+  end
+
+  describe "#repository" do
+    subject { section.repository }
+
+    it { is_expected.to eq(repository) }
+
+    it_behaves_like "unmodifiable string"
   end
 end
