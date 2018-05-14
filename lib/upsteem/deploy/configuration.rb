@@ -66,6 +66,13 @@ module Upsteem
       end
       memoize :env_gems_to_update
 
+      def notifications
+        create_section_from_yaml_file(
+          ConfigurationSections::NotificationConfiguration, options[:notifications]
+        )
+      end
+      memoize :notifications
+
       private
 
       attr_reader :options
@@ -77,6 +84,10 @@ module Upsteem
 
       def target_branches
         TARGET_BRANCHES
+      end
+
+      def create_section_from_yaml_file(klass, file_path)
+        ConfigurationSections::Factory.create_from_yaml_file(klass, project_path, file_path)
       end
     end
   end

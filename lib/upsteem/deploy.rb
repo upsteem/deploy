@@ -3,11 +3,14 @@ require "logger"
 require "git"
 require "fileutils"
 require "memoist"
+require "yaml"
+require "json"
 require "faraday"
 
 %w[
   models
   builders
+  configuration_sections
   configuration
   errors
   environment
