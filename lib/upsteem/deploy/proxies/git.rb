@@ -82,6 +82,12 @@ module Upsteem
           raise Errors::DeployError, "Error while aborting the merge"
         end
 
+        def head_revision
+          git.revparse("HEAD")
+        rescue ::Git::GitExecuteError
+          raise Errors::DeployError, "Error while looking up HEAD revision"
+        end
+
         private
 
         attr_reader :project_path

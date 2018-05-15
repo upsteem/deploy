@@ -8,10 +8,9 @@ require "json"
 require "faraday"
 
 %w[
-  models
-  builders
   configuration_sections
   configuration
+  services_container
   errors
   environment
   proxies
