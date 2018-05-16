@@ -29,29 +29,8 @@ module Upsteem
       end
 
       def logger
-        options[:logger] || Logger.new(STDOUT)
+        options[:logger]
       end
-      memoize :logger
-
-      def system
-        Proxies::System.new
-      end
-      memoize :system
-
-      def bundler
-        Proxies::Bundler.new(system)
-      end
-      memoize :bundler
-
-      def capistrano
-        Proxies::Capistrano.new(bundler)
-      end
-      memoize :capistrano
-
-      def git
-        Proxies::VerboseGit.new(project_path, logger)
-      end
-      memoize :git
 
       # List of gems that do not have environment-specific variations.
       def shared_gems_to_update

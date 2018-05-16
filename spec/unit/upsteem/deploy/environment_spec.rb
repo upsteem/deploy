@@ -1,203 +1,152 @@
 require "spec_helper"
 
 describe Upsteem::Deploy::Environment do
-  let(:configuration) { instance_double("Upsteem::Deploy::Configuration") }
   let(:name) { "production" }
   let(:feature_branch) { "DEV-123" }
   let(:supported) { true }
   let(:target_branch) { "master" }
-
   let(:project_path) { "/path/to/project" }
-  let(:logger) { instance_double("Logger") }
-  let(:git) { instance_double("Upsteem::Deploy::Proxies::Git") }
-  let(:bundler) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
-  let(:capistrano) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
-
-  let(:shared_gems_to_update) { %w[foo] }
-  let(:env_gems_to_update) { %w[bar baz] }
+  let(:gemfile_overwrite_needed) { true }
   let(:gems_to_update) { %w[foo bar baz] }
 
-  let(:configuration_arg) { configuration }
-  let(:name_arg) { name }
-  let(:feature_branch_arg) { feature_branch }
+  let(:logger) { instance_double("Logger") }
+  let(:system) { instance_double("Upsteem::Deploy::Proxies::System") }
+  let(:bundler) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
+  let(:capistrano) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
+  let(:git) { instance_double("Upsteem::Deploy::Proxies::Git") }
+  let(:notifier) { instance_double("Upsteem::Deploy::Proxies::Notifier") }
 
   let(:environment) do
-    described_class.set_up(
-      configuration_arg, name_arg, feature_branch_arg
-    )
+    described_class.new
   end
 
-  shared_examples_for "delegator to configuration" do
+  describe "#name" do
+    subject { environment.name }
+
     before do
-      allow(configuration).to receive(nested_method).and_return(nested_result)
+      environment.name = name
     end
 
-    it { is_expected.to eq(nested_result) }
+    it { is_expected.to eq(name) }
   end
 
-  before do
-    if configuration
-      allow(configuration).to receive(
-        :environment_supported?
-      ).with(name).once.and_return(supported)
+  describe "#feature_branch" do
+    subject { environment.feature_branch }
 
-      allow(configuration).to receive(
-        :find_target_branch
-      ).with(name).once.and_return(target_branch)
+    before do
+      environment.feature_branch = feature_branch
     end
+
+    it { is_expected.to eq(feature_branch) }
   end
 
-  describe ".new" do
-    subject do
-      described_class.new(configuration_arg, name_arg, feature_branch_arg)
+  describe "#supported" do
+    subject { environment.supported }
+
+    before do
+      environment.supported = supported
     end
 
-    it_behaves_like "exception raiser", NoMethodError
-  end
-
-  describe ".set_up" do
-    subject { environment }
-
-    shared_examples_for "instance returner" do
-      it { is_expected.to be_instance_of(described_class) }
-
-      it "sets and exposes name" do
-        expect(subject.name).to eq(name)
-      end
-
-      it "sets and exposes feature branch" do
-        expect(subject.feature_branch).to eq(feature_branch)
-      end
-    end
-
-    shared_examples_for "feature branchless instance returner" do |arg|
-      let(:feature_branch) { nil }
-      let(:feature_branch_arg) { arg }
-      it_behaves_like "instance returner"
-    end
-
-    shared_examples_for "invalid environment error raiser" do
-      let(:error_class) { Upsteem::Deploy::Errors::InvalidEnvironment }
-      let(:predefined_exception) { [error_class, exception_message] }
-
-      it_behaves_like "exception raiser"
-    end
-
-    shared_examples_for "invalid environment error raiser on blank name" do |name|
-      let(:name) { name }
-      let(:exception_message) { "Environment name cannot be blank" }
-      it_behaves_like "invalid environment error raiser"
-    end
-
-    it_behaves_like "instance returner"
-
-    context "when arguments need formatting" do
-      let(:name_arg) { "  #{name}  " }
-      let(:feature_branch_arg) { " #{feature_branch}  " }
-      it_behaves_like "instance returner"
-    end
-
-    context "when feature branch is missing" do
-      it_behaves_like "feature branchless instance returner", ""
-      it_behaves_like "feature branchless instance returner", nil
-    end
-
-    context "when configuration is missing" do
-      let(:configuration) { nil }
-      it_behaves_like "exception raiser", ArgumentError, "Configuration must be supplied!"
-    end
-
-    context "when environment name is missing" do
-      it_behaves_like "invalid environment error raiser on blank name", ""
-      it_behaves_like "invalid environment error raiser on blank name", nil
-    end
-
-    context "when environment is not supported" do
-      let(:supported) { false }
-      let(:exception_message) { "Environment not supported: #{name.inspect}" }
-      it_behaves_like "invalid environment error raiser"
-    end
+    it { is_expected.to eq(supported) }
   end
 
   describe "#target_branch" do
-    subject do
-      # Call it twice to test if memoization works:
-      environment.target_branch
-      environment.target_branch
+    subject { environment.target_branch }
+
+    before do
+      environment.target_branch = target_branch
     end
 
     it { is_expected.to eq(target_branch) }
   end
 
   describe "#project_path" do
-    let(:nested_method) { :project_path }
-    let(:nested_result) { project_path }
-
     subject { environment.project_path }
 
-    it_behaves_like "delegator to configuration"
-  end
-
-  describe "#logger" do
-    let(:nested_method) { :logger }
-    let(:nested_result) { logger }
-
-    subject { environment.logger }
-
-    it_behaves_like "delegator to configuration"
-  end
-
-  describe "#git" do
-    let(:nested_method) { :git }
-    let(:nested_result) { git }
-
-    subject { environment.git }
-
-    it_behaves_like "delegator to configuration"
-  end
-
-  describe "#bundler" do
-    let(:nested_method) { :bundler }
-    let(:nested_result) { bundler }
-
-    subject { environment.bundler }
-
-    it_behaves_like "delegator to configuration"
-  end
-
-  describe "#capistrano" do
-    let(:nested_method) { :capistrano }
-    let(:nested_result) { capistrano }
-
-    subject { environment.capistrano }
-
-    it_behaves_like "delegator to configuration"
-  end
-
-  describe "#gemfile_overwrite_needed?" do
     before do
-      allow(configuration).to receive(:env_gems_to_update).and_return(env_gems_to_update)
+      environment.project_path = project_path
     end
 
-    subject { environment.gemfile_overwrite_needed? }
+    it { is_expected.to eq(project_path) }
+  end
 
-    it { is_expected.to eq(true) }
+  describe "#gemfile_overwrite_needed" do
+    subject { environment.gemfile_overwrite_needed }
 
-    context "when there are no environment specific gems to update" do
-      let(:env_gems_to_update) { [] }
-
-      it { is_expected.to eq(false) }
+    before do
+      environment.gemfile_overwrite_needed = gemfile_overwrite_needed
     end
+
+    it { is_expected.to eq(gemfile_overwrite_needed) }
   end
 
   describe "#gems_to_update" do
-    before do
-      allow(configuration).to receive(:shared_gems_to_update).and_return(shared_gems_to_update)
-      allow(configuration).to receive(:env_gems_to_update).and_return(env_gems_to_update)
-    end
-
     subject { environment.gems_to_update }
 
+    before do
+      environment.gems_to_update = gems_to_update
+    end
+
     it { is_expected.to eq(gems_to_update) }
+  end
+
+  describe "#logger" do
+    subject { environment.logger }
+
+    before do
+      environment.logger = logger
+    end
+
+    it { is_expected.to eq(logger) }
+  end
+
+  describe "#system" do
+    subject { environment.system }
+
+    before do
+      environment.system = system
+    end
+
+    it { is_expected.to eq(system) }
+  end
+
+  describe "#bundler" do
+    subject { environment.bundler }
+
+    before do
+      environment.bundler = bundler
+    end
+
+    it { is_expected.to eq(bundler) }
+  end
+
+  describe "#capistrano" do
+    subject { environment.capistrano }
+
+    before do
+      environment.capistrano = capistrano
+    end
+
+    it { is_expected.to eq(capistrano) }
+  end
+
+  describe "#git" do
+    subject { environment.git }
+
+    before do
+      environment.git = git
+    end
+
+    it { is_expected.to eq(git) }
+  end
+
+  describe "#notifier" do
+    subject { environment.notifier }
+
+    before do
+      environment.notifier = notifier
+    end
+
+    it { is_expected.to eq(notifier) }
   end
 end

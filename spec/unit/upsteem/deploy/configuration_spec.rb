@@ -6,21 +6,7 @@ describe Upsteem::Deploy::Configuration do
   let(:project_path_is_directory) { true }
   let(:options) { { project_path: "/something/else/not/usable" } }
 
-  let(:logger) { instance_double("Logger", "default") }
-  let(:custom_logger) { instance_double("Logger", "custom") }
-  let(:configured_logger) { logger }
-
-  let(:system_proxy) { instance_double("Upsteem::Deploy::Proxies::System", "default") }
-  let(:custom_system_proxy) { instance_double("Upsteem::Deploy::Proxies::System", "custom") }
-
-  let(:bundler_proxy) { instance_double("Upsteem::Deploy::Proxies::Bundler", "default") }
-  let(:custom_bundler_proxy) { instance_double("Upsteem::Deploy::Proxies::Bundler", "custom") }
-
-  let(:capistrano_proxy) { instance_double("Upsteem::Deploy::Proxies::Capistrano", "default") }
-  let(:custom_capistrano_proxy) { instance_double("Upsteem::Deploy::Proxies::Capistrano", "custom") }
-
-  let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit", "default") }
-  let(:custom_git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit", "custom") }
+  let(:logger) { instance_double("Logger") }
 
   let(:notifications_config_file_path) { "config/notifications.yml" }
   let(:notifications_section) { instance_double("Upsteem::Deploy::ConfigurationSections::NotificationConfiguration") }
@@ -35,17 +21,6 @@ describe Upsteem::Deploy::Configuration do
 
   before do
     allow(File).to receive(:directory?).with(project_path).and_return(project_path_is_directory)
-    allow(Logger).to receive(:new).with(STDOUT).once.and_return(logger)
-    allow(Upsteem::Deploy::Proxies::System).to receive(:new).once.and_return(system_proxy)
-    allow(Upsteem::Deploy::Proxies::Bundler).to receive(:new).with(
-      system_proxy
-    ).once.and_return(bundler_proxy)
-    allow(Upsteem::Deploy::Proxies::Capistrano).to receive(:new).with(
-      bundler_proxy
-    ).once.and_return(capistrano_proxy)
-    allow(Upsteem::Deploy::Proxies::VerboseGit).to receive(:new).once.with(
-      project_path, logger
-    ).and_return(git_proxy)
     allow(Upsteem::Deploy::ConfigurationSections::Factory).to receive(
       :create_from_yaml_file
     ).once.with(
@@ -192,94 +167,14 @@ describe Upsteem::Deploy::Configuration do
     context "when options not given" do
       include_context "default instance"
 
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when options given" do
+      let(:options) { { logger: logger } }
+      include_context "custom instance"
+
       it { is_expected.to eq(logger) }
-    end
-
-    context "when options given" do
-      let(:options) { { logger: custom_logger } }
-      include_context "custom instance"
-
-      it { is_expected.to eq(custom_logger) }
-    end
-  end
-
-  describe "#system" do
-    subject do
-      configuration.system
-      configuration.system
-    end
-
-    context "when options not given" do
-      include_context "default instance"
-
-      it { is_expected.to eq(system_proxy) }
-    end
-
-    context "when options given" do
-      let(:options) { { system: custom_system_proxy } }
-      include_context "custom instance"
-
-      it { is_expected.to eq(system_proxy) }
-    end
-  end
-
-  describe "#bundler" do
-    subject do
-      configuration.bundler
-      configuration.bundler
-    end
-
-    context "when options not given" do
-      include_context "default instance"
-
-      it { is_expected.to eq(bundler_proxy) }
-    end
-
-    context "when options given" do
-      let(:options) { { bundler: custom_bundler_proxy } }
-      include_context "custom instance"
-
-      it { is_expected.to eq(bundler_proxy) }
-    end
-  end
-
-  describe "#capistrano" do
-    subject do
-      configuration.capistrano
-      configuration.capistrano
-    end
-
-    context "when options not given" do
-      include_context "default instance"
-
-      it { is_expected.to eq(capistrano_proxy) }
-    end
-
-    context "when options given" do
-      let(:options) { { capistrano: custom_capistrano_proxy } }
-      include_context "custom instance"
-
-      it { is_expected.to eq(capistrano_proxy) }
-    end
-  end
-
-  describe "#git" do
-    subject do
-      configuration.git
-      configuration.git
-    end
-
-    context "when options not given" do
-      include_context "default instance"
-
-      it { is_expected.to eq(git_proxy) }
-    end
-
-    context "when options given" do
-      let(:options) { { git: custom_git_proxy } }
-      include_context "custom instance"
-
-      it { is_expected.to eq(git_proxy) }
     end
   end
 

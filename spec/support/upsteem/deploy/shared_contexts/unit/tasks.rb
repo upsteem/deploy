@@ -99,7 +99,7 @@ shared_context "setup for tasks" do
 
     def allow_gemfile_overwrite_necessity_checking_from_environment
       allow(environment).to receive(
-        :gemfile_overwrite_needed?
+        :gemfile_overwrite_needed
       ).and_return(gemfile_overwrite_needed)
     end
 

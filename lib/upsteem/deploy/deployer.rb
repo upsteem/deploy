@@ -32,8 +32,13 @@ module Upsteem
       end
       memoize :configuration
 
+      def services_container
+        ServicesContainer.new(configuration)
+      end
+      memoize :services_container
+
       def environment
-        Environment.set_up(configuration, environment_name, feature_branch)
+        Environment::Factory.create(services_container, configuration, environment_name, feature_branch)
       end
       memoize :environment
 

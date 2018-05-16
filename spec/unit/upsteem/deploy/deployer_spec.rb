@@ -13,6 +13,7 @@ describe Upsteem::Deploy::Deployer do
   let(:deploy_error_message) { "Git merge conflict" }
 
   let(:configuration) { instance_double("Upsteem::Deploy::Configuration") }
+  let(:services_container) { instance_double("Upsteem::Deploy::ServicesContainer") }
   let(:environment) { instance_double("Upsteem::Deploy::Environment") }
   let(:task) { instance_double("Upsteem::Deploy::Tasks::Task") }
 
@@ -22,6 +23,12 @@ describe Upsteem::Deploy::Deployer do
     ).with(project_path, options).once.and_return(configuration)
   end
 
+  def allow_services_container_setup
+    allow(Upsteem::Deploy::ServicesContainer).to receive(
+      :new
+    ).with(configuration).once.and_return(services_container)
+  end
+
   def allow_supported_environments_lookup
     allow(configuration).to receive(
       :supported_environments
@@ -29,9 +36,9 @@ describe Upsteem::Deploy::Deployer do
   end
 
   def allow_environment_setup_without_specifying_outcome
-    allow(Upsteem::Deploy::Environment).to receive(
-      :set_up
-    ).with(configuration, environment_name, feature_branch).once
+    allow(Upsteem::Deploy::Environment::Factory).to receive(
+      :create
+    ).with(services_container, configuration, environment_name, feature_branch).once
   end
 
   def allow_environment_setup
@@ -74,6 +81,7 @@ describe Upsteem::Deploy::Deployer do
 
   before do
     allow_configuration_setup
+    allow_services_container_setup
     allow_supported_environments_lookup
     allow_environment_setup
     allow_task_setup

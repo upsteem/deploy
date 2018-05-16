@@ -8,6 +8,8 @@ require "json"
 require "faraday"
 
 %w[
+  builder_interface
+  validator_interface
   configuration_sections
   configuration
   services_container
