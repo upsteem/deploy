@@ -59,4 +59,14 @@ describe Upsteem::Deploy::Services::Git do
     include_context "setup for abort_merge"
     it_behaves_like "abort_merge instance method in Services::Git"
   end
+
+  describe "#head_revision" do
+    include_context "setup for head_revision"
+    it_behaves_like "head_revision instance method in Services::Git"
+  end
+
+  describe "#user_name" do
+    include_context "setup for user_name"
+    it_behaves_like "user_name instance method in Services::Git"
+  end
 end

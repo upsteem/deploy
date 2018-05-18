@@ -88,6 +88,12 @@ module Upsteem
           raise Errors::DeployError, "Error while looking up HEAD revision"
         end
 
+        def user_name
+          git.config["user.name"]
+        rescue ::Git::GitExecuteError
+          raise Errors::DeployError, "Error while looking up user name"
+        end
+
         private
 
         attr_reader :project_path

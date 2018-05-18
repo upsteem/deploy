@@ -167,4 +167,15 @@ shared_context "examples for git service" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser"
   end
+
+  shared_examples_for "head_revision instance method in Services::Git" do
+    it_behaves_like "nested result returner"
+    it_behaves_like "nested error re-raiser"
+  end
+
+  shared_examples_for "user_name instance method in Services::Git" do
+    it { is_expected.to eq(user_name) }
+
+    it_behaves_like "nested error re-raiser"
+  end
 end

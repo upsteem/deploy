@@ -188,4 +188,25 @@ shared_context "setup for git service" do
       allow(git).to receive(:lib).and_return(git_lib)
     end
   end
+
+  shared_context "setup for head_revision" do
+    let(:predefined_exception_message) { "Error while looking up HEAD revision" }
+
+    let(:nested_method) { :revparse }
+    let(:nested_method_arguments) { ["HEAD"] }
+    let(:nested_result) { "e75a24006f7fadfbc48d75d871ee299b13e90983" }
+
+    subject { git_service.head_revision }
+  end
+
+  shared_context "setup for user_name" do
+    let(:predefined_exception_message) { "Error while looking up user name" }
+
+    let(:user_name) { "John Doe" }
+    let(:config) { { "user.name" => user_name } }
+    let(:nested_method) { :config }
+    let(:nested_result) { config }
+
+    subject { git_service.user_name }
+  end
 end
