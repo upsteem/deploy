@@ -4,11 +4,12 @@ module Upsteem
       class Notifier
         def notify
           return unless configuration
-          log_request
           response = make_request
           handle_response(response)
+        rescue Upsteem::Deploy::Errors::HttpError => e
+          handle_response_error(e)
         rescue Faraday::Error => e
-          handle_error(e)
+          handle_connection_error(e)
         end
 
         private
@@ -22,16 +23,21 @@ module Upsteem
           @git = git
         end
 
-        def log_request
-          logger.info("Making HTTP POST request to #{configuration.url}")
-          logger.info("Request body: #{request_body}")
+        def log_request(request)
+          logger.info("Request body: #{request.body}")
+        end
+
+        def create_connection(settings)
+          logger.info("Connection settings: #{settings.inspect}")
+          Faraday.new(settings)
         end
 
         def make_request
-          conn = Faraday.new(url: configuration.url)
+          conn = create_connection(url: configuration.url)
           conn.post do |req|
             req.headers["Content-Type"] = "application/json"
             req.body = request_body
+            log_request(req)
           end
         end
 
@@ -44,14 +50,29 @@ module Upsteem
           }.to_json
         end
 
+        # 2xx is OK.
+        def response_ok?(response)
+          response.status.to_i / 100 == 2 # integer division
+        end
+
         def handle_response(response)
           logger.info("Response status: #{response.status}")
           logger.info("Response body: #{response.body}")
+          raise_error("Bad HTTP response status: #{response.status}") unless response_ok?(response)
           true
         end
 
-        def handle_error(error)
-          logger.error("HTTP error occurred: #{error.class} (#{error.message})")
+        def raise_error(message)
+          raise Upsteem::Deploy::Errors::HttpError, message
+        end
+
+        def handle_response_error(error)
+          logger.error(error.message)
+          false
+        end
+
+        def handle_connection_error(error)
+          logger.error("HTTP connection error occurred: #{error.class} (#{error.message})")
           false
         end
       end

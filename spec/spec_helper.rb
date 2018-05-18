@@ -1,6 +1,8 @@
 require "bundler"
 require "rubygems"
 Bundler.require(:default, :test)
+require "webmock/rspec"
+
 require_relative "support/preload"
 
 RSpec.configure do |config|
