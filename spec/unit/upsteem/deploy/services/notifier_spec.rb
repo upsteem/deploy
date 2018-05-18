@@ -76,12 +76,20 @@ describe Upsteem::Deploy::Services::Notifier do
     def expect_result_logging; end
   end
 
+  def expect_conclusion_message_logging
+    expect_logger_info("Deploy notification successful")
+  end
+
   # Override where necessary.
   def expect_error_logging; end
 
   shared_context "error logging" do
     def expect_error_logging
       expect_logger_action(:error, logger_error_message)
+    end
+
+    def expect_conclusion_message_logging
+      expect_logger_action(:error, "Deploy notification failed")
     end
   end
 
@@ -106,10 +114,12 @@ describe Upsteem::Deploy::Services::Notifier do
     end
 
     def expect_events
+      expect_logger_info("Starting deploy notification")
       expect_logger_info("Connection settings: #{connection_settings.inspect}")
       expect_logger_info("Request body: #{request_body}")
       expect_result_logging
       expect_error_logging
+      expect_conclusion_message_logging
     end
 
     before do
@@ -157,7 +167,9 @@ describe Upsteem::Deploy::Services::Notifier do
 
       def stub_service_data; end
 
-      def expect_events; end
+      def expect_events
+        expect_logger_info("Deploy notifications have not been enabled for this project")
+      end
 
       it { is_expected.to be_nil }
     end

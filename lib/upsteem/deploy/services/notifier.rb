@@ -3,7 +3,7 @@ module Upsteem
     module Services
       class Notifier
         def notify
-          return unless configuration
+          return not_applicable unless configuration
           response = make_request
           handle_response(response)
         rescue Upsteem::Deploy::Errors::HttpError => e
@@ -23,6 +23,11 @@ module Upsteem
           @git = git
         end
 
+        def not_applicable
+          logger.info("Deploy notifications have not been enabled for this project")
+          nil
+        end
+
         def log_request(request)
           logger.info("Request body: #{request.body}")
         end
@@ -33,6 +38,7 @@ module Upsteem
         end
 
         def make_request
+          logger.info("Starting deploy notification")
           conn = create_connection(url: configuration.url)
           conn.post do |req|
             req.headers["Content-Type"] = "application/json"
@@ -59,6 +65,7 @@ module Upsteem
           logger.info("Response status: #{response.status}")
           logger.info("Response body: #{response.body}")
           raise_error("Bad HTTP response status: #{response.status}") unless response_ok?(response)
+          logger.info("Deploy notification successful")
           true
         end
 
@@ -66,14 +73,18 @@ module Upsteem
           raise Upsteem::Deploy::Errors::HttpError, message
         end
 
-        def handle_response_error(error)
-          logger.error(error.message)
+        def handle_error_message(error_message)
+          logger.error(error_message)
+          logger.error("Deploy notification failed")
           false
         end
 
+        def handle_response_error(error)
+          handle_error_message(error.message)
+        end
+
         def handle_connection_error(error)
-          logger.error("HTTP connection error occurred: #{error.class} (#{error.message})")
-          false
+          handle_error_message("HTTP connection error occurred: #{error.class} (#{error.message})")
         end
       end
     end
