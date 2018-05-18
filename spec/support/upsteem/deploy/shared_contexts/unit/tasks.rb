@@ -147,6 +147,18 @@ shared_context "setup for tasks" do
     end
   end
 
+  shared_context "notifier operations" do
+    let(:notifier_service) { instance_double("Upsteem::Deploy::Services::Notifier") }
+
+    def allow_notifier_service_from_services_container
+      allow(services_container).to receive(:notifier).and_return(notifier_service)
+    end
+
+    before do
+      allow_notifier_service_from_services_container
+    end
+  end
+
   shared_context "git operations" do
   end
 
