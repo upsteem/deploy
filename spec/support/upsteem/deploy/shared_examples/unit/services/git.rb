@@ -177,5 +177,17 @@ shared_context "examples for git service" do
     it { is_expected.to eq(user_name) }
 
     it_behaves_like "nested error re-raiser"
+
+    shared_examples_for "missing value error raiser" do |blank|
+      let(:user_name) { blank }
+      let(:predefined_exception) do
+        [Upsteem::Deploy::Errors::DeployError, "User name not found in git config"]
+      end
+
+      it_behaves_like "exception raiser"
+    end
+
+    it_behaves_like "missing value error raiser", nil
+    it_behaves_like "missing value error raiser", ""
   end
 end

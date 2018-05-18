@@ -89,7 +89,9 @@ module Upsteem
         end
 
         def user_name
-          git.config["user.name"]
+          git.config["user.name"].presence || raise(
+            Errors::DeployError, "User name not found in git config"
+          )
         rescue ::Git::GitExecuteError
           raise Errors::DeployError, "Error while looking up user name"
         end
