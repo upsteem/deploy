@@ -9,13 +9,12 @@ require "faraday"
 
 %w[
   builder_interface
-  validator_interface
   configuration_sections
   configuration
-  services_container
-  errors
   environment
+  errors
   proxies
+  services_container
   tasks
   deployer
   usage

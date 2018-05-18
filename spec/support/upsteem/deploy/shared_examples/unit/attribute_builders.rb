@@ -12,15 +12,13 @@ shared_context "examples for attribute builders" do
   end
 
   shared_examples_for "ordered attributes builder" do
-    before do
-      attributes.each do |attribute_name, attribute_value|
-        expect_to_receive_exactly_ordered_and_return(
-          1, buildable, "#{attribute_name}=".to_sym, attribute_value, attribute_value
-        )
-      end
-    end
-
+    include_context "setup for ordered attributes builder"
     it { is_expected.to eq(builder) }
+  end
+
+  shared_examples_for "ordered attributes build failure" do |*exception|
+    include_context "setup for ordered attributes builder"
+    it_behaves_like "exception raiser", *exception
   end
 
   shared_examples_for "attribute builder" do

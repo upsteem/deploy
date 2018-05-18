@@ -1,12 +1,12 @@
 require "spec_helper"
 Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_and_examples_for("unit/builder_interface")
-Upsteem::Deploy::SpecHelperLoader.require_shared_examples_for("unit/attribute_builders")
+Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_and_examples_for("unit/attribute_builders")
 
 describe Upsteem::Deploy::Environment::Builder do
+  include_context "setup for attribute builders"
   include_context "examples for attribute builders"
 
   let(:environment_class) { Upsteem::Deploy::Environment }
-  let(:validator_class) { Upsteem::Deploy::Environment::Validator }
 
   let(:configuration) { instance_double("Upsteem::Deploy::Configuration") }
   let(:name) { "someenv" }
@@ -37,12 +37,12 @@ describe Upsteem::Deploy::Environment::Builder do
 
     def expect_custom_builder_events
       expect_to_receive_exactly_ordered_and_return(
-        1, builder, :configure, builder, name, feature_branch, configuration
+        1, builder, :configure!, builder, name, feature_branch, configuration
       )
     end
 
     def execute_custom_builder_events
-      builder.configure(name, feature_branch, configuration)
+      builder.configure!(name, feature_branch, configuration)
     end
 
     it_behaves_like "builder interface"
@@ -51,21 +51,16 @@ describe Upsteem::Deploy::Environment::Builder do
   describe "#build" do
     subject { builder.build }
 
-    before do
-      expect(validator_class).to receive(:validate).with(environment)
-    end
-
     it { is_expected.to eq(environment) }
   end
 
-  describe "#configure" do
-    subject { builder.configure(name_arg, feature_branch_arg, configuration) }
+  describe "#configure!" do
+    subject { builder.configure!(name_arg, feature_branch_arg, configuration) }
 
     let(:attributes) do
       [
         [:name, name],
         [:feature_branch, feature_branch],
-        [:supported, supported],
         [:target_branch, target_branch],
         [:project_path, project_path],
         [:gemfile_overwrite_needed, gemfile_overwrite_needed],
@@ -73,28 +68,30 @@ describe Upsteem::Deploy::Environment::Builder do
       ]
     end
 
-    shared_context "attributes for missing name" do
+    shared_context "attributes set when name validation fails" do
       let(:attributes) do
-        [
-          [:name, name],
-          [:feature_branch, feature_branch],
-          [:project_path, project_path],
-          [:gemfile_overwrite_needed, gemfile_overwrite_needed],
-          [:gems_to_update, gems_to_update]
-        ]
+        []
       end
     end
 
-    shared_examples_for "nullifier of blank string argument" do |key, blank|
-      let(key) { nil }
-      let("#{key}_arg") { blank }
+    shared_context "blank string argument" do |attribute_key, blank|
+      let(attribute_key) { nil }
+      let("#{attribute_key}_arg") { blank }
+    end
 
+    shared_examples_for "nullifier of blank string argument" do |attribute_key, blank|
+      include_context "blank string argument", attribute_key, blank
       it_behaves_like "ordered attributes builder"
     end
 
-    shared_examples_for "nullifier of blank name" do |blank|
-      include_context "attributes for missing name"
-      it_behaves_like "nullifier of blank string argument", :name, blank
+    shared_examples_for "error raiser on blank name" do |blank|
+      include_context "blank string argument", :name, blank
+      include_context "attributes set when name validation fails"
+      let(:predefined_exception) do
+        [Upsteem::Deploy::Errors::InvalidEnvironment, "Environment name is required"]
+      end
+
+      it_behaves_like "ordered attributes build failure"
     end
 
     before do
@@ -122,9 +119,9 @@ describe Upsteem::Deploy::Environment::Builder do
       it_behaves_like "ordered attributes builder"
     end
 
-    it_behaves_like "nullifier of blank name", nil
-    it_behaves_like "nullifier of blank name", ""
-    it_behaves_like "nullifier of blank name", "  "
+    it_behaves_like "error raiser on blank name", nil
+    it_behaves_like "error raiser on blank name", ""
+    it_behaves_like "error raiser on blank name", "  "
 
     it_behaves_like "nullifier of blank string argument", :feature_branch, nil
     it_behaves_like "nullifier of blank string argument", :feature_branch, ""

@@ -3,7 +3,6 @@ require "spec_helper"
 describe Upsteem::Deploy::Environment do
   let(:name) { "production" }
   let(:feature_branch) { "DEV-123" }
-  let(:supported) { true }
   let(:target_branch) { "master" }
   let(:project_path) { "/path/to/project" }
   let(:gemfile_overwrite_needed) { true }
@@ -31,16 +30,6 @@ describe Upsteem::Deploy::Environment do
     end
 
     it { is_expected.to eq(feature_branch) }
-  end
-
-  describe "#supported" do
-    subject { environment.supported }
-
-    before do
-      environment.supported = supported
-    end
-
-    it { is_expected.to eq(supported) }
   end
 
   describe "#target_branch" do

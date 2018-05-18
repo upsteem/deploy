@@ -19,7 +19,7 @@ describe Upsteem::Deploy::Environment::Factory do
 
     before do
       allow(builder_class).to receive(:build).and_yield(builder).and_return(environment)
-      expect(builder).to receive(:configure).with(name, feature_branch, configuration).once
+      expect(builder).to receive(:configure!).with(name, feature_branch, configuration).once
     end
 
     it { is_expected.to eq(environment) }
