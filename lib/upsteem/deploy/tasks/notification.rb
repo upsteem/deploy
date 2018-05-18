@@ -3,9 +3,7 @@ module Upsteem
     module Tasks
       class Notification < Task
         def run
-          logger.info("Sending deploy notification")
           notifier.notify
-          logger.info("Notification sent")
           true
         end
 
