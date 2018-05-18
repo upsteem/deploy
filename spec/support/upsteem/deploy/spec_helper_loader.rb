@@ -17,10 +17,6 @@ module Upsteem
           require_shared_examples_for(path)
         end
 
-        def require_spec_extension(path)
-          require_helper("spec_extensions/#{path}")
-        end
-
         private
 
         def require_helper(path)

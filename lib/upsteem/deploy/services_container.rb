@@ -3,7 +3,7 @@ module Upsteem
     class ServicesContainer
       extend Memoist
 
-      attr_reader :environment, :configuration
+      attr_reader :environment
 
       def logger
         configuration.logger || Logger.new(STDOUT)
@@ -36,6 +36,8 @@ module Upsteem
       memoize :notifier
 
       private
+
+      attr_reader :configuration
 
       def initialize(configuration, environment)
         @configuration = configuration

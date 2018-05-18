@@ -72,6 +72,12 @@ describe Upsteem::Deploy::ServicesContainer do
     stub_notifier
   end
 
+  describe "#environment" do
+    subject { container.environment }
+
+    it { is_expected.to eq(environment) }
+  end
+
   describe "#logger" do
     subject do
       container.logger
