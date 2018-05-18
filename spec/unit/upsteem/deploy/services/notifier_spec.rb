@@ -23,6 +23,8 @@ describe Upsteem::Deploy::Services::Notifier do
     }.to_json
   end
 
+  let(:request_occurrences) { 1 }
+
   let(:http_timeout) { false }
   let(:http_response_status) { 200 }
   let(:http_response_body) { "OK" }
@@ -83,21 +85,40 @@ describe Upsteem::Deploy::Services::Notifier do
     end
   end
 
+  def validate_notification_request
+    data = {
+      body: request_body,
+      headers: { "Content-Type" => "application/json" }
+    }
+    expect(a_request(:post, url).with(data)).to have_been_made.times(request_occurrences)
+  end
+
   describe "#notify" do
     subject { notifier.notify }
 
-    before do
+    def stub_service_data
       stub_url_from_configuration
       stub_repository_from_configuration
       stub_name_from_environment
       stub_user_name_from_git
       stub_head_revision_from_git
       stub_notification_request
+    end
 
+    def expect_events
       expect_logger_info("Connection settings: #{connection_settings.inspect}")
       expect_logger_info("Request body: #{request_body}")
       expect_result_logging
       expect_error_logging
+    end
+
+    before do
+      stub_service_data
+      expect_events
+    end
+
+    after do
+      validate_notification_request
     end
 
     it { is_expected.to eq(true) }
@@ -128,6 +149,17 @@ describe Upsteem::Deploy::Services::Notifier do
       end
 
       it { is_expected.to eq(false) }
+    end
+
+    context "when configuration is missing" do
+      let(:configuration) { nil }
+      let(:request_occurrences) { 0 }
+
+      def stub_service_data; end
+
+      def expect_events; end
+
+      it { is_expected.to be_nil }
     end
   end
 end
