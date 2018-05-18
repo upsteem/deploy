@@ -1,4 +1,4 @@
-shared_context "setup for git proxy" do
+shared_context "setup for git service" do
   let(:project_path) { "/path/to/project" }
   let(:git) { instance_double("Git::Base") }
 
@@ -6,7 +6,7 @@ shared_context "setup for git proxy" do
   let(:nested_receiver) { git }
   let(:nested_method_arguments) { [] }
 
-  let(:git_proxy) { described_class.new(project_path) }
+  let(:git_service) { described_class.new(project_path) }
 
   # Override these according to the particular situation:
   def expect_before_nested_method_call; end
@@ -34,7 +34,7 @@ shared_context "setup for git proxy" do
   end
 
   shared_context "setup for instance creation" do
-    subject { git_proxy }
+    subject { git_service }
     # Override to disable:
     def expect_nested_method_call; end
 
@@ -52,7 +52,7 @@ shared_context "setup for git proxy" do
     let(:nested_method) { :current_branch }
     let(:nested_result) { "somebranch" }
 
-    subject { git_proxy.current_branch }
+    subject { git_service.current_branch }
   end
 
   shared_context "setup for must_be_current_branch!" do
@@ -63,14 +63,14 @@ shared_context "setup for git proxy" do
     let(:nested_method) { :current_branch }
     let(:nested_result) { current_branch }
 
-    subject { git_proxy.must_be_current_branch!(branch) }
+    subject { git_service.must_be_current_branch!(branch) }
   end
 
   shared_context "setup for status" do
     let(:nested_method) { :status }
     let(:nested_result) { instance_double("Git::Status") }
 
-    subject { git_proxy.status }
+    subject { git_service.status }
   end
 
   shared_context "setup for checkout" do
@@ -81,7 +81,7 @@ shared_context "setup for git proxy" do
     let(:nested_method_arguments) { [branch] }
     let(:nested_result) { "Checked out #{branch}" }
 
-    subject { git_proxy.checkout(branch) }
+    subject { git_service.checkout(branch) }
   end
 
   shared_context "setup for pull" do
@@ -93,7 +93,7 @@ shared_context "setup for git proxy" do
     let(:nested_method_arguments) { [repository, branch] }
     let(:nested_result) { "Already up-to-date" }
 
-    subject { git_proxy.pull(repository, branch) }
+    subject { git_service.pull(repository, branch) }
   end
 
   shared_context "setup for must_be_in_sync!" do
@@ -107,7 +107,7 @@ shared_context "setup for git proxy" do
     let(:nested_method) { :size }
     let(:nested_result) { git_log_size }
 
-    subject { git_proxy.must_be_in_sync!(branch) }
+    subject { git_service.must_be_in_sync!(branch) }
 
     before do
       allow(git).to receive(:log).and_return(git_log)
@@ -126,7 +126,7 @@ shared_context "setup for git proxy" do
     let(:nested_method_arguments) { [commit_message, commit_options] }
     let(:nested_result) { "Successfully committed changes" }
 
-    subject { git_proxy.commit(commit_message, commit_options) }
+    subject { git_service.commit(commit_message, commit_options) }
   end
 
   shared_context "setup for push" do
@@ -140,7 +140,7 @@ shared_context "setup for git proxy" do
     let(:nested_method_arguments) { [remote, branch] }
     let(:nested_result) { "Successfully pushed changes" }
 
-    subject { git_proxy.push(remote, branch) }
+    subject { git_service.push(remote, branch) }
   end
 
   shared_context "setup for create_merge_commit" do
@@ -165,7 +165,7 @@ shared_context "setup for git proxy" do
       )
     end
 
-    subject { git_proxy.create_merge_commit(branch) }
+    subject { git_service.create_merge_commit(branch) }
 
     before do
       allow(git).to receive(:current_branch).and_return(current_branch)
@@ -182,7 +182,7 @@ shared_context "setup for git proxy" do
     let(:nested_method_arguments) { ["merge", ["--abort"]] }
     let(:nested_result) { "Merge aborted" }
 
-    subject { git_proxy.abort_merge }
+    subject { git_service.abort_merge }
 
     before do
       allow(git).to receive(:lib).and_return(git_lib)

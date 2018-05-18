@@ -7,7 +7,7 @@ shared_context "setup for tasks" do
 
   let(:environment) { instance_double("Upsteem::Deploy::Environment") }
   let(:logger) { instance_double("Logger") }
-  let(:git_proxy) { instance_double("Upsteem::Deploy::Proxies::VerboseGit") }
+  let(:git_service) { instance_double("Upsteem::Deploy::Services::VerboseGit") }
 
   let(:services_container) { instance_double("Upsteem::Deploy::ServicesContainer") }
 
@@ -42,8 +42,8 @@ shared_context "setup for tasks" do
     allow(services_container).to receive(:logger).and_return(logger)
   end
 
-  def allow_git_proxy_from_services_container
-    allow(services_container).to receive(:git).and_return(git_proxy)
+  def allow_git_service_from_services_container
+    allow(services_container).to receive(:git).and_return(git_service)
   end
 
   def sub_task_helper(label, name = nil)
@@ -124,26 +124,26 @@ shared_context "setup for tasks" do
   end
 
   shared_context "bundler operations" do
-    let(:bundler_proxy) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
+    let(:bundler_service) { instance_double("Upsteem::Deploy::Services::Bundler") }
 
-    def allow_bundler_proxy_from_services_container
-      allow(services_container).to receive(:bundler).and_return(bundler_proxy)
+    def allow_bundler_service_from_services_container
+      allow(services_container).to receive(:bundler).and_return(bundler_service)
     end
 
     before do
-      allow_bundler_proxy_from_services_container
+      allow_bundler_service_from_services_container
     end
   end
 
   shared_context "capistrano operations" do
-    let(:capistrano_proxy) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
+    let(:capistrano_service) { instance_double("Upsteem::Deploy::Services::Capistrano") }
 
-    def allow_capistrano_proxy_from_services_container
-      allow(services_container).to receive(:capistrano).and_return(capistrano_proxy)
+    def allow_capistrano_service_from_services_container
+      allow(services_container).to receive(:capistrano).and_return(capistrano_service)
     end
 
     before do
-      allow_capistrano_proxy_from_services_container
+      allow_capistrano_service_from_services_container
     end
   end
 
@@ -156,6 +156,6 @@ shared_context "setup for tasks" do
     allow_target_branch_from_environment
     allow_feature_branch_from_environment
     allow_logger_from_services_container
-    allow_git_proxy_from_services_container
+    allow_git_service_from_services_container
   end
 end

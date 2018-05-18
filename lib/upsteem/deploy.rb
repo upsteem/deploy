@@ -13,7 +13,7 @@ require "faraday"
   configuration
   environment
   errors
-  proxies
+  services
   services_container
   tasks
   deployer

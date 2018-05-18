@@ -12,11 +12,11 @@ describe Upsteem::Deploy::ServicesContainer do
   let(:custom_logger) { instance_double("Logger", "custom") }
   let(:logger) { custom_logger }
 
-  let(:system) { instance_double("Upsteem::Deploy::Proxies::System") }
-  let(:bundler) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
-  let(:capistrano) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
-  let(:git) { instance_double("Upsteem::Deploy::Proxies::VerboseGit") }
-  let(:notifier) { instance_double("Upsteem::Deploy::Proxies::Notifier") }
+  let(:system) { instance_double("Upsteem::Deploy::Services::System") }
+  let(:bundler) { instance_double("Upsteem::Deploy::Services::Bundler") }
+  let(:capistrano) { instance_double("Upsteem::Deploy::Services::Capistrano") }
+  let(:git) { instance_double("Upsteem::Deploy::Services::VerboseGit") }
+  let(:notifier) { instance_double("Upsteem::Deploy::Services::Notifier") }
 
   let(:container) { described_class.new(configuration, environment) }
 
@@ -37,25 +37,25 @@ describe Upsteem::Deploy::ServicesContainer do
   end
 
   def stub_system
-    allow(Upsteem::Deploy::Proxies::System).to receive(:new).once.and_return(system)
+    allow(Upsteem::Deploy::Services::System).to receive(:new).once.and_return(system)
   end
 
   def stub_bundler
-    allow(Upsteem::Deploy::Proxies::Bundler).to receive(:new).with(system).once.and_return(bundler)
+    allow(Upsteem::Deploy::Services::Bundler).to receive(:new).with(system).once.and_return(bundler)
   end
 
   def stub_capistrano
-    allow(Upsteem::Deploy::Proxies::Capistrano).to receive(:new).with(bundler).once.and_return(capistrano)
+    allow(Upsteem::Deploy::Services::Capistrano).to receive(:new).with(bundler).once.and_return(capistrano)
   end
 
   def stub_git
-    allow(Upsteem::Deploy::Proxies::VerboseGit).to receive(:new).with(
+    allow(Upsteem::Deploy::Services::VerboseGit).to receive(:new).with(
       project_path, logger
     ).once.and_return(git)
   end
 
   def stub_notifier
-    allow(Upsteem::Deploy::Proxies::Notifier).to receive(:new).with(
+    allow(Upsteem::Deploy::Services::Notifier).to receive(:new).with(
       notifications_configuration, environment, logger, git
     ).once.and_return(notifier)
   end

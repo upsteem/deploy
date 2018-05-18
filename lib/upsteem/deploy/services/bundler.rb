@@ -1,6 +1,6 @@
 module Upsteem
   module Deploy
-    module Proxies
+    module Services
       class Bundler
         def execute_command(command)
           system.call("bundle exec #{command}")

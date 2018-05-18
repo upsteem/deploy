@@ -1,6 +1,6 @@
 module Upsteem
   module Deploy
-    module Proxies
+    module Services
       class Git
         extend Memoist
 

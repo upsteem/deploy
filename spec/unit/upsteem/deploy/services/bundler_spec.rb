@@ -1,8 +1,8 @@
 require "spec_helper"
-Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_for("unit/proxies/system")
+Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_for("unit/services/system")
 
-describe Upsteem::Deploy::Proxies::Bundler do
-  include_context "setup for system proxy"
+describe Upsteem::Deploy::Services::Bundler do
+  include_context "setup for system service"
 
   let(:bundler) { described_class.new(system) }
 

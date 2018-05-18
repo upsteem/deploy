@@ -1,8 +1,8 @@
 require "spec_helper"
-Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_for("unit/proxies/bundler")
+Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_for("unit/services/bundler")
 
-describe Upsteem::Deploy::Proxies::Capistrano do
-  include_context "setup for bundler proxy"
+describe Upsteem::Deploy::Services::Capistrano do
+  include_context "setup for bundler service"
 
   let(:environment_name) { "myenv" }
   let(:environment) { instance_double("Upsteem::Deploy::Environment") }

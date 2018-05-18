@@ -6,5 +6,5 @@
   verbose_git
   notifier
 ].each do |file|
-  require_relative("proxies/#{file}")
+  require_relative("services/#{file}")
 end

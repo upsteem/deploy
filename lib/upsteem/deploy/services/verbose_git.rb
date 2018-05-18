@@ -1,6 +1,6 @@
 module Upsteem
   module Deploy
-    module Proxies
+    module Services
       class VerboseGit < Git
         def checkout(branch)
           logger.info("Checking out #{branch}")

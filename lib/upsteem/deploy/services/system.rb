@@ -1,6 +1,6 @@
 module Upsteem
   module Deploy
-    module Proxies
+    module Services
       class System
         def call(command)
           system(command)

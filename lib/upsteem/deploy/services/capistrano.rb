@@ -1,6 +1,6 @@
 module Upsteem
   module Deploy
-    module Proxies
+    module Services
       class Capistrano
         def deploy(environment)
           bundler.execute_command("cap #{environment.name} deploy")

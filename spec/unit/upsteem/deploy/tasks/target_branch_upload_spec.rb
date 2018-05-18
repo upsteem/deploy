@@ -20,24 +20,24 @@ describe Upsteem::Deploy::Tasks::TargetBranchUpload do
   let(:pushing_occurrences) { 1 }
 
   before do
-    allow(git_proxy).to receive(:current_branch).and_return(current_branch)
+    allow(git_service).to receive(:current_branch).and_return(current_branch)
   end
 
   def expect_current_branch_validation
     expect_to_receive_exactly_ordered(
-      validation_occurrences, git_proxy, :must_be_current_branch!, target_branch
+      validation_occurrences, git_service, :must_be_current_branch!, target_branch
     )
   end
 
   def expect_git_commit
     expect_to_receive_exactly_ordered(
-      committing_occurrences, git_proxy, :commit, commit_message, commit_options
+      committing_occurrences, git_service, :commit, commit_message, commit_options
     )
   end
 
   def expect_git_push
     expect_to_receive_exactly_ordered(
-      pushing_occurrences, git_proxy, :push, "origin", target_branch
+      pushing_occurrences, git_service, :push, "origin", target_branch
     )
   end
 

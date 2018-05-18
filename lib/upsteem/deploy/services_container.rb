@@ -11,27 +11,27 @@ module Upsteem
       memoize :logger
 
       def system
-        Proxies::System.new
+        Services::System.new
       end
       memoize :system
 
       def bundler
-        Proxies::Bundler.new(system)
+        Services::Bundler.new(system)
       end
       memoize :bundler
 
       def capistrano
-        Proxies::Capistrano.new(bundler)
+        Services::Capistrano.new(bundler)
       end
       memoize :capistrano
 
       def git
-        Proxies::VerboseGit.new(configuration.project_path, logger)
+        Services::VerboseGit.new(configuration.project_path, logger)
       end
       memoize :git
 
       def notifier
-        Proxies::Notifier.new(configuration.notifications, environment, logger, git)
+        Services::Notifier.new(configuration.notifications, environment, logger, git)
       end
       memoize :notifier
 

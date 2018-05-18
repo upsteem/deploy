@@ -1,7 +1,7 @@
-shared_context "examples for git proxy" do
+shared_context "examples for git service" do
   shared_examples_for "instance creation success" do
     include_context "setup for instance creation"
-    it { is_expected.to eq(git_proxy) }
+    it { is_expected.to eq(git_service) }
   end
 
   shared_examples_for "instance creation failure" do |*exception|
@@ -33,12 +33,12 @@ shared_context "examples for git proxy" do
     it_behaves_like "exception raiser"
   end
 
-  shared_examples_for "current_branch instance method in Proxies::Git" do
+  shared_examples_for "current_branch instance method in Services::Git" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser", "Error while looking up current branch"
   end
 
-  shared_examples_for "must_be_current_branch! instance method in Proxies::Git" do
+  shared_examples_for "must_be_current_branch! instance method in Services::Git" do
     it { is_expected.to eq(true) }
 
     it_behaves_like "nested error re-raiser", "Error while looking up current branch"
@@ -57,22 +57,22 @@ shared_context "examples for git proxy" do
     end
   end
 
-  shared_examples_for "status instance method in Proxies::Git" do
+  shared_examples_for "status instance method in Services::Git" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser", "Error while checking git status"
   end
 
-  shared_examples_for "checkout instance method in Proxies::Git" do
+  shared_examples_for "checkout instance method in Services::Git" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser"
   end
 
-  shared_examples_for "pull instance method in Proxies::Git" do
+  shared_examples_for "pull instance method in Services::Git" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser"
   end
 
-  shared_examples_for "must_be_in_sync! instance method in Proxies::Git" do
+  shared_examples_for "must_be_in_sync! instance method in Services::Git" do
     it { is_expected.to eq(true) }
 
     context "when log size is nil" do
@@ -102,7 +102,7 @@ shared_context "examples for git proxy" do
     it_behaves_like "nested error re-raiser"
   end
 
-  shared_examples_for "commit instance method in Proxies::Git" do
+  shared_examples_for "commit instance method in Services::Git" do
     shared_examples_for "result returner or error raiser" do
       it_behaves_like "nested result returner"
       it_behaves_like "nested error re-raiser"
@@ -121,17 +121,17 @@ shared_context "examples for git proxy" do
 
     context "when called without options argument" do
       let(:commit_options) { {} }
-      subject { git_proxy.commit(commit_message) }
+      subject { git_service.commit(commit_message) }
       it_behaves_like "result returner or error raiser"
     end
   end
 
-  shared_examples_for "push instance method in Proxies::Git" do
+  shared_examples_for "push instance method in Services::Git" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser"
   end
 
-  shared_examples_for "create_merge_commit instance method in Proxies::Git" do
+  shared_examples_for "create_merge_commit instance method in Services::Git" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser"
 
@@ -163,7 +163,7 @@ shared_context "examples for git proxy" do
     end
   end
 
-  shared_examples_for "abort_merge instance method in Proxies::Git" do
+  shared_examples_for "abort_merge instance method in Services::Git" do
     it_behaves_like "nested result returner"
     it_behaves_like "nested error re-raiser"
   end

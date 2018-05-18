@@ -12,7 +12,7 @@ describe Upsteem::Deploy::Tasks::FeatureBranchComparison do
 
   describe "#run" do
     before do
-      expect_to_receive_exactly_ordered_and_return(1, git_proxy, :must_be_in_sync!, up_to_date, feature_branch)
+      expect_to_receive_exactly_ordered_and_return(1, git_service, :must_be_in_sync!, up_to_date, feature_branch)
     end
 
     it_behaves_like "normal run"

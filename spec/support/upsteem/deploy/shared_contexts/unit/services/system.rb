@@ -1,5 +1,5 @@
-shared_context "setup for system proxy" do
-  let(:system) { instance_double("Upsteem::Deploy::Proxies::System") }
+shared_context "setup for system service" do
+  let(:system) { instance_double("Upsteem::Deploy::Services::System") }
 
   def expect_system_call_and_return(command, result, times = 1)
     expect_to_receive_exactly_ordered_and_return(
