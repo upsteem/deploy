@@ -28,7 +28,7 @@ describe Upsteem::Deploy::Tasks::GitStatusValidation do
   let(:status) { instance_double("Git::Status") }
 
   def expect_git_status_checking
-    expect_to_receive_exactly_ordered_and_return(1, git_proxy, :status, status)
+    expect_to_receive_exactly_ordered_and_return(1, git_service, :status, status)
   end
 
   def status_item

@@ -9,19 +9,31 @@ module Upsteem
 
         private
 
-        attr_reader :environment, :options
+        attr_reader :services_container, :environment, :logger, :git, :options
 
-        def initialize(environment, options = {})
-          @environment = environment
+        def initialize(services_container, options = {})
+          _inject(services_container)
           @options = options
           after_initialize
         end
+
+        # To add additional services, override inject() instead.
+        def _inject(services_container)
+          @services_container = services_container
+          @environment = services_container.environment
+          @logger = services_container.logger
+          @git = services_container.git
+          inject(services_container)
+        end
+
+        # Override this to inject additional services.
+        def inject(services_container); end
 
         # Override this if necessary.
         def after_initialize; end
 
         def run_sub_task(klass, options = {})
-          klass.new(environment, options).run
+          klass.new(services_container, options).run
         end
 
         def feature_branch
@@ -30,14 +42,6 @@ module Upsteem
 
         def target_branch
           environment.target_branch
-        end
-
-        def logger
-          environment.logger
-        end
-
-        def git
-          environment.git
         end
       end
     end

@@ -13,7 +13,7 @@ describe Upsteem::Deploy::Tasks::CapistranoDeployment do
 
     def expect_capistrano_deploy
       expect_to_receive_exactly_ordered(
-        capistrano_deploy_occurrences, capistrano_proxy, :deploy, environment
+        capistrano_deploy_occurrences, capistrano_service, :deploy, environment
       )
     end
 

@@ -10,6 +10,7 @@
   feature_branch_syncing
   feature_branch_merging
   capistrano_deployment
+  notification
 
   feature_branch_inclusion_flow
   gems_update_flow

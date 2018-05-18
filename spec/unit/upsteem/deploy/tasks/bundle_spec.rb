@@ -23,13 +23,13 @@ describe Upsteem::Deploy::Tasks::Bundle do
 
     def expect_bundle_install
       expect_to_receive_exactly_ordered(
-        bundle_install_occurrences, bundler_proxy, :install_gems
+        bundle_install_occurrences, bundler_service, :install_gems
       )
     end
 
     def expect_bundle_update
       expect_to_receive_exactly_ordered(
-        bundle_update_occurrences, bundler_proxy, :update_gems, gems_to_update
+        bundle_update_occurrences, bundler_service, :update_gems, gems_to_update
       )
     end
 

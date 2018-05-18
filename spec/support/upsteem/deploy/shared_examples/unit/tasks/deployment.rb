@@ -11,6 +11,7 @@ shared_context "examples for deployment tasks" do
 
       context "when a deploy error occurs" do
         let(:capistrano_deployment_occurrences) { 0 }
+        let(:notification_occurrences) { 0 }
 
         include_context(
           "occurrence of exception", :feature_branch_inclusion_flow,
@@ -22,6 +23,7 @@ shared_context "examples for deployment tasks" do
 
       context "when a deploy error with a cause occurs" do
         let(:capistrano_deployment_occurrences) { 0 }
+        let(:notification_occurrences) { 0 }
 
         include_context(
           "occurrence of exception with cause", :feature_branch_inclusion_flow,
@@ -40,6 +42,7 @@ shared_context "examples for deployment tasks" do
 
       context "when a deploy error occurs" do
         let(:capistrano_deployment_occurrences) { 0 }
+        let(:notification_occurrences) { 0 }
 
         include_context(
           "occurrence of exception", :gems_update_flow,
@@ -51,6 +54,7 @@ shared_context "examples for deployment tasks" do
 
       context "when a deploy error with a cause occurs" do
         let(:capistrano_deployment_occurrences) { 0 }
+        let(:notification_occurrences) { 0 }
 
         include_context(
           "occurrence of exception with cause", :gems_update_flow,

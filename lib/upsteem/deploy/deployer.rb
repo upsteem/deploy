@@ -10,7 +10,7 @@ module Upsteem
       end
 
       def deploy
-        task_class.new(environment).run
+        task_class.new(services_container).run
       rescue Errors::InvalidEnvironment => e
         display_invalid_environment_error(e)
       end
@@ -33,9 +33,14 @@ module Upsteem
       memoize :configuration
 
       def environment
-        Environment.set_up(configuration, environment_name, feature_branch)
+        Environment::Factory.create(configuration, environment_name, feature_branch)
       end
       memoize :environment
+
+      def services_container
+        ServicesContainer.new(configuration, environment)
+      end
+      memoize :services_container
 
       def display_invalid_environment_error(error)
         puts(error)

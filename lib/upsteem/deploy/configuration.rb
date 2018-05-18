@@ -29,29 +29,8 @@ module Upsteem
       end
 
       def logger
-        options[:logger] || Logger.new(STDOUT)
+        options[:logger]
       end
-      memoize :logger
-
-      def system
-        Proxies::System.new
-      end
-      memoize :system
-
-      def bundler
-        Proxies::Bundler.new(system)
-      end
-      memoize :bundler
-
-      def capistrano
-        Proxies::Capistrano.new(bundler)
-      end
-      memoize :capistrano
-
-      def git
-        Proxies::VerboseGit.new(project_path, logger)
-      end
-      memoize :git
 
       # List of gems that do not have environment-specific variations.
       def shared_gems_to_update
@@ -66,6 +45,13 @@ module Upsteem
       end
       memoize :env_gems_to_update
 
+      def notifications
+        create_section_from_yaml_file(
+          ConfigurationSections::NotificationConfiguration, options[:notifications]
+        )
+      end
+      memoize :notifications
+
       private
 
       attr_reader :options
@@ -77,6 +63,10 @@ module Upsteem
 
       def target_branches
         TARGET_BRANCHES
+      end
+
+      def create_section_from_yaml_file(klass, file_path)
+        ConfigurationSections::Factory.create_from_yaml_file(klass, project_path, file_path)
       end
     end
   end

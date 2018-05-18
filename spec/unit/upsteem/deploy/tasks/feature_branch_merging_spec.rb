@@ -12,7 +12,7 @@ describe Upsteem::Deploy::Tasks::FeatureBranchMerging do
 
   def expect_merge_commit_creation_and_further
     expect_to_receive_exactly_ordered(
-      1, git_proxy, :create_merge_commit, "origin/#{feature_branch}"
+      1, git_service, :create_merge_commit, "origin/#{feature_branch}"
     )
     expect_logger_info("Finished merging feature branch into #{environment_name} environment")
   end
@@ -21,7 +21,7 @@ describe Upsteem::Deploy::Tasks::FeatureBranchMerging do
     before do
       expect_logger_info("Starting to merge feature branch into #{environment_name} environment")
       expect_to_receive_exactly_ordered(
-        1, git_proxy, :must_be_current_branch!, target_branch
+        1, git_service, :must_be_current_branch!, target_branch
       )
       expect_merge_commit_creation_and_further
     end
@@ -35,10 +35,10 @@ describe Upsteem::Deploy::Tasks::FeatureBranchMerging do
 
       def expect_merge_commit_creation_and_further
         expect_to_receive_exactly_ordered_and_raise(
-          1, git_proxy, :create_merge_commit, predefined_exception, "origin/#{feature_branch}"
+          1, git_service, :create_merge_commit, predefined_exception, "origin/#{feature_branch}"
         )
         expect_logger_action(:error, "Feature branch merging into #{environment_name} failed due to merge conflict")
-        expect_to_receive_exactly_ordered(1, git_proxy, :abort_merge)
+        expect_to_receive_exactly_ordered(1, git_service, :abort_merge)
       end
 
       it_behaves_like "error run"
