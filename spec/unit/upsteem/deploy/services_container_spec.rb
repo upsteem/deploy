@@ -6,6 +6,7 @@ describe Upsteem::Deploy::ServicesContainer do
     instance_double("Upsteem::Deploy::ConfigurationSections::NotificationConfiguration")
   end
   let(:configuration) { instance_double("Upsteem::Deploy::Configuration") }
+  let(:environment) { instance_double("Upsteem::Deploy::Environment") }
 
   let(:default_logger) { instance_double("Logger", "default") }
   let(:custom_logger) { instance_double("Logger", "custom") }
@@ -17,7 +18,7 @@ describe Upsteem::Deploy::ServicesContainer do
   let(:git) { instance_double("Upsteem::Deploy::Proxies::VerboseGit") }
   let(:notifier) { instance_double("Upsteem::Deploy::Proxies::Notifier") }
 
-  let(:container) { described_class.new(configuration) }
+  let(:container) { described_class.new(configuration, environment) }
 
   def stub_project_path
     allow(configuration).to receive(:project_path).and_return(project_path)
@@ -55,7 +56,7 @@ describe Upsteem::Deploy::ServicesContainer do
 
   def stub_notifier
     allow(Upsteem::Deploy::Proxies::Notifier).to receive(:new).with(
-      notifications_configuration, logger
+      notifications_configuration, environment, logger, git
     ).once.and_return(notifier)
   end
 

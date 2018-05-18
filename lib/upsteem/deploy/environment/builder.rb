@@ -16,16 +16,6 @@ module Upsteem
           self
         end
 
-        def services(services_container)
-          logger(services_container)
-          system(services_container)
-          bundler(services_container)
-          capistrano(services_container)
-          git(services_container)
-          notifier(services_container)
-          self
-        end
-
         private
 
         attr_reader :environment
@@ -73,30 +63,6 @@ module Upsteem
 
         def configure_gems_to_update(configuration)
           environment.gems_to_update = configuration.shared_gems_to_update + configuration.env_gems_to_update
-        end
-
-        def logger(services_container)
-          environment.logger = services_container.logger
-        end
-
-        def system(services_container)
-          environment.system = services_container.system
-        end
-
-        def bundler(services_container)
-          environment.bundler = services_container.bundler
-        end
-
-        def capistrano(services_container)
-          environment.capistrano = services_container.capistrano
-        end
-
-        def git(services_container)
-          environment.git = services_container.git
-        end
-
-        def notifier(services_container)
-          environment.notifier = services_container.notifier
         end
       end
     end

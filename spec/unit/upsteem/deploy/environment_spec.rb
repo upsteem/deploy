@@ -9,13 +9,6 @@ describe Upsteem::Deploy::Environment do
   let(:gemfile_overwrite_needed) { true }
   let(:gems_to_update) { %w[foo bar baz] }
 
-  let(:logger) { instance_double("Logger") }
-  let(:system) { instance_double("Upsteem::Deploy::Proxies::System") }
-  let(:bundler) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
-  let(:capistrano) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
-  let(:git) { instance_double("Upsteem::Deploy::Proxies::Git") }
-  let(:notifier) { instance_double("Upsteem::Deploy::Proxies::Notifier") }
-
   let(:environment) do
     described_class.new
   end
@@ -88,65 +81,5 @@ describe Upsteem::Deploy::Environment do
     end
 
     it { is_expected.to eq(gems_to_update) }
-  end
-
-  describe "#logger" do
-    subject { environment.logger }
-
-    before do
-      environment.logger = logger
-    end
-
-    it { is_expected.to eq(logger) }
-  end
-
-  describe "#system" do
-    subject { environment.system }
-
-    before do
-      environment.system = system
-    end
-
-    it { is_expected.to eq(system) }
-  end
-
-  describe "#bundler" do
-    subject { environment.bundler }
-
-    before do
-      environment.bundler = bundler
-    end
-
-    it { is_expected.to eq(bundler) }
-  end
-
-  describe "#capistrano" do
-    subject { environment.capistrano }
-
-    before do
-      environment.capistrano = capistrano
-    end
-
-    it { is_expected.to eq(capistrano) }
-  end
-
-  describe "#git" do
-    subject { environment.git }
-
-    before do
-      environment.git = git
-    end
-
-    it { is_expected.to eq(git) }
-  end
-
-  describe "#notifier" do
-    subject { environment.notifier }
-
-    before do
-      environment.notifier = notifier
-    end
-
-    it { is_expected.to eq(notifier) }
   end
 end

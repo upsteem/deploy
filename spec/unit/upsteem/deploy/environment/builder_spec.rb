@@ -8,7 +8,6 @@ describe Upsteem::Deploy::Environment::Builder do
   let(:environment_class) { Upsteem::Deploy::Environment }
   let(:validator_class) { Upsteem::Deploy::Environment::Validator }
 
-  let(:services_container) { instance_double("Upsteem::Deploy::ServicesContainer") }
   let(:configuration) { instance_double("Upsteem::Deploy::Configuration") }
   let(:name) { "someenv" }
   let(:name_arg) { name }
@@ -23,13 +22,6 @@ describe Upsteem::Deploy::Environment::Builder do
   let(:shared_gems_to_update) { %w[foo] }
   let(:env_gems_to_update) { %w[bar baz] }
   let(:gems_to_update) { %w[foo bar baz] }
-
-  let(:logger) { instance_double("Logger") }
-  let(:system) { instance_double("Upsteem::Deploy::Proxies::System") }
-  let(:bundler) { instance_double("Upsteem::Deploy::Proxies::Bundler") }
-  let(:capistrano) { instance_double("Upsteem::Deploy::Proxies::Capistrano") }
-  let(:git) { instance_double("Upsteem::Deploy::Proxies::Git") }
-  let(:notifier) { instance_double("Upsteem::Deploy::Proxies::Notifier") }
 
   let(:environment) { instance_double("Upsteem::Deploy::Environment") }
   let(:builder) { described_class.new }
@@ -137,28 +129,5 @@ describe Upsteem::Deploy::Environment::Builder do
     it_behaves_like "nullifier of blank string argument", :feature_branch, nil
     it_behaves_like "nullifier of blank string argument", :feature_branch, ""
     it_behaves_like "nullifier of blank string argument", :feature_branch, "  "
-  end
-
-  describe "#services" do
-    subject { builder.services(services_container) }
-
-    let(:attributes) do
-      {
-        logger: logger,
-        system: system,
-        bundler: bundler,
-        capistrano: capistrano,
-        git: git,
-        notifier: notifier
-      }
-    end
-
-    before do
-      attributes.each do |attribute_name, attribute_value|
-        allow(services_container).to receive(attribute_name).and_return(attribute_value)
-      end
-    end
-
-    it_behaves_like "attributes builder"
   end
 end

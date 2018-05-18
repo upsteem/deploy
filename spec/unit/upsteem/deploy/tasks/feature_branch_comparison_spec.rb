@@ -4,7 +4,6 @@ Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_and_examples_for("unit
 describe Upsteem::Deploy::Tasks::FeatureBranchComparison do
   include_context "setup for tasks"
   include_context "examples for tasks"
-
   include_context "git operations"
 
   it_behaves_like "feature branch dependent"

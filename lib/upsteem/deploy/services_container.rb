@@ -3,7 +3,7 @@ module Upsteem
     class ServicesContainer
       extend Memoist
 
-      attr_reader :configuration
+      attr_reader :environment, :configuration
 
       def logger
         configuration.logger || Logger.new(STDOUT)
@@ -31,16 +31,15 @@ module Upsteem
       memoize :git
 
       def notifier
-        Proxies::Notifier.new(configuration.notifications, logger)
+        Proxies::Notifier.new(configuration.notifications, environment, logger, git)
       end
       memoize :notifier
 
       private
 
-      def initialize(configuration)
-        @configuration = configuration || raise(
-          ArgumentError, "Cannot create services container without configuration"
-        )
+      def initialize(configuration, environment)
+        @configuration = configuration
+        @environment = environment
       end
     end
   end
