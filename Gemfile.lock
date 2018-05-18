@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    upsteem-deploy (0.0.1)
+    upsteem-deploy (0.1.0)
       activesupport (~> 4.2)
       faraday (~> 0.15)
       git (~> 1.3.0)
