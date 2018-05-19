@@ -6,4 +6,7 @@ require "rubygems"
 require "bundler"
 Bundler.require(:default)
 
-Upsteem::Deploy.deploy_gem(File.dirname(__FILE__), ARGV[0], ARGV[1])
+Upsteem::Deploy.deploy_gem(
+  File.dirname(__FILE__), ARGV[0], ARGV[1],
+  tests: "config/deploy/tests.yml"
+)
