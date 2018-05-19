@@ -3,6 +3,7 @@
   spec_helper_loader
   mocking_helpers
   shared_examples/exception_raiser
+  shared_examples/uninitializable
   integration_spec_utils
 ].each do |file|
   require_relative("upsteem/deploy/#{file}")

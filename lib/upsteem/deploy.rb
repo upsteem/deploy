@@ -8,12 +8,15 @@ require "json"
 require "faraday"
 
 %w[
+  utils
+  uninitializable
   builder_interface
   configuration_sections
   configuration
   environment
   errors
   services
+  factories
   services_container
   tasks
   deployer
