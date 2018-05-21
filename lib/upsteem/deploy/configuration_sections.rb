@@ -1,5 +1,6 @@
 %w[
   section
+  tests_configuration
   notification_configuration
   factory
 ].each do |file|

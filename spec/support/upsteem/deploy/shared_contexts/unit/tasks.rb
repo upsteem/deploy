@@ -135,6 +135,18 @@ shared_context "setup for tasks" do
     end
   end
 
+  shared_context "test runner operations" do
+    let(:test_runner_service) { instance_double("Upsteem::Deploy::Services::TestRunners::Base") }
+
+    def allow_test_runner_service_from_services_container
+      allow(services_container).to receive(:test_runner).and_return(test_runner_service)
+    end
+
+    before do
+      allow_test_runner_service_from_services_container
+    end
+  end
+
   shared_context "capistrano operations" do
     let(:capistrano_service) { instance_double("Upsteem::Deploy::Services::Capistrano") }
 

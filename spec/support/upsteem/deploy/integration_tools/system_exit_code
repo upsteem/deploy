@@ -1,0 +1,8 @@
+#!/bin/sh
+# This is a helper script for system service integration testing.
+
+if [ "$1" = "true" ] ; then
+  exit 0
+else
+  exit 7
+fi

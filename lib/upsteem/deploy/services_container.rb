@@ -35,6 +35,11 @@ module Upsteem
       end
       memoize :notifier
 
+      def test_runner
+        Factories::TestRunnerFactory.create(configuration.tests, self)
+      end
+      memoize :test_runner
+
       private
 
       attr_reader :configuration
