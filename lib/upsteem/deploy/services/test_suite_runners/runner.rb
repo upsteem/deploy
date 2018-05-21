@@ -6,7 +6,7 @@ module Upsteem
         # instead of skipping it or similar.
         class Runner < Base
           def run_test_suite
-            logger.info("Starting to run the test suite using rspec")
+            logger.info("Starting to run the test suite using #{configuration.framework}")
             execute_test_suite_command
             logger.info("Tests successful")
             true
