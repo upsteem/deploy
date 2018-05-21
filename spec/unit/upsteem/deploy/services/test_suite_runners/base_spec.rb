@@ -7,7 +7,7 @@ describe Upsteem::Deploy::Services::TestSuiteRunners::Base do
     subject { runner.run_test_suite }
 
     let(:predefined_exception) do
-      [NotImplementedError, "Test runners must implement run_test_suite() instance method"]
+      [NotImplementedError, "Test suite runners must implement run_test_suite() instance method"]
     end
 
     it_behaves_like "exception raiser"
