@@ -9,13 +9,13 @@ describe Upsteem::Deploy::Tasks::TargetBranchDownload do
 
   def expect_git_checkout
     expect_to_receive_exactly_ordered(
-      1, git_proxy, :checkout, target_branch
+      1, git_service, :checkout, target_branch
     )
   end
 
   def expect_git_pull
     expect_to_receive_exactly_ordered(
-      1, git_proxy, :pull, "origin", target_branch
+      1, git_service, :pull, "origin", target_branch
     )
   end
 

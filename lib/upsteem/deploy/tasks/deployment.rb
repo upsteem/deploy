@@ -10,6 +10,7 @@ module Upsteem
           prepare_deployment
           update_environment_source_code
           execute_environment
+          notify
           log_success
           true
         rescue Errors::DeployError => e
@@ -42,6 +43,10 @@ module Upsteem
         # This depends on the type of the project that is to be deployed.
         # Gems usually don't have execution phase while applications do.
         def execute_environment; end
+
+        def notify
+          run_sub_task(Tasks::Notification)
+        end
 
         def log_start
           feature_branch_descr = feature_branch ? " of #{feature_branch}" : ""
