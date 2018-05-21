@@ -136,7 +136,7 @@ shared_context "setup for tasks" do
   end
 
   shared_context "test runner operations" do
-    let(:test_suite_runner_service) { instance_double("Upsteem::Deploy::Services::TestSuiteRunners::Base") }
+    let(:test_suite_runner_service) { instance_double("Upsteem::Deploy::Services::TestSuiteRunners::Runner") }
 
     def allow_test_suite_runner_service_from_services_container
       allow(services_container).to receive(:test_suite_runner).and_return(test_suite_runner_service)
