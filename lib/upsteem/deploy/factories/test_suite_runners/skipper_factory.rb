@@ -1,12 +1,10 @@
 module Upsteem
   module Deploy
     module Factories
-      module TestRunners
-        class SkipperFactory
-          extend Uninitializable
-
+      module TestSuiteRunners
+        module SkipperFactory
           def self.create(_configuration, services_container)
-            Services::TestRunners::Skipper.new(
+            Services::TestSuiteRunners::Skipper.new(
               services_container.logger
             )
           end

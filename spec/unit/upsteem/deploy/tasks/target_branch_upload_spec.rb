@@ -30,7 +30,7 @@ describe Upsteem::Deploy::Tasks::TargetBranchUpload do
 
   def expect_test_suite_run
     expect_to_receive_exactly_ordered(
-      test_suite_running_occurrences, test_runner_service, :run_tests
+      test_suite_running_occurrences, test_suite_runner_service, :run_test_suite
     )
   end
 
@@ -44,7 +44,7 @@ describe Upsteem::Deploy::Tasks::TargetBranchUpload do
 
     def expect_test_suite_run
       expect_to_receive_exactly_ordered_and_raise(
-        test_suite_running_occurrences, test_runner_service, :run_tests, predefined_exception
+        test_suite_running_occurrences, test_suite_runner_service, :run_test_suite, predefined_exception
       )
     end
 

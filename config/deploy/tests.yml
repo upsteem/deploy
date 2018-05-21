@@ -1,2 +1,0 @@
-# Configuration file that defines how tests should be run during the deploy.
-framework: rspec

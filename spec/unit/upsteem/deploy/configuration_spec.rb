@@ -8,8 +8,8 @@ describe Upsteem::Deploy::Configuration do
 
   let(:logger) { instance_double("Logger") }
 
-  let(:tests_config_file_path) { "config/tests.yml" }
-  let(:tests_section) { instance_double("Upsteem::Deploy::ConfigurationSections::TestsConfiguration") }
+  let(:test_suite_config_file_path) { "config/test_suite.yml" }
+  let(:test_suite_section) { instance_double("Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration") }
 
   let(:notifications_config_file_path) { "config/notifications.yml" }
   let(:notifications_section) { instance_double("Upsteem::Deploy::ConfigurationSections::NotificationConfiguration") }
@@ -41,17 +41,17 @@ describe Upsteem::Deploy::Configuration do
     )
   end
 
-  def stub_tests_configuration_creation
+  def stub_test_suite_configuration_creation
     stub_configuration_section_creation(
-      Upsteem::Deploy::ConfigurationSections::TestsConfiguration,
-      tests_config_file_path, tests_section
+      Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration,
+      test_suite_config_file_path, test_suite_section
     )
   end
 
   before do
     stub_project_path_validation
     stub_notifications_configuration_creation
-    stub_tests_configuration_creation
+    stub_test_suite_configuration_creation
   end
 
   describe ".new" do
@@ -237,24 +237,24 @@ describe Upsteem::Deploy::Configuration do
     end
   end
 
-  describe "#tests" do
+  describe "#test_suite" do
     subject do
-      configuration.tests
-      configuration.tests
+      configuration.test_suite
+      configuration.test_suite
     end
 
     context "when options not given" do
       include_context "default instance"
-      let(:tests_config_file_path) { nil }
+      let(:test_suite_config_file_path) { nil }
 
-      it { is_expected.to eq(tests_section) }
+      it { is_expected.to eq(test_suite_section) }
     end
 
     context "when options given" do
-      let(:options) { { tests: tests_config_file_path } }
+      let(:options) { { test_suite: test_suite_config_file_path } }
       include_context "custom instance"
 
-      it { is_expected.to eq(tests_section) }
+      it { is_expected.to eq(test_suite_section) }
     end
   end
 

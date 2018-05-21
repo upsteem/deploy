@@ -1,7 +1,7 @@
 module Upsteem
   module Deploy
     module ConfigurationSections
-      class TestsConfiguration < Section
+      class TestSuiteConfiguration < Section
         extend Memoist
 
         DEFAULT_FRAMEWORK = :rspec

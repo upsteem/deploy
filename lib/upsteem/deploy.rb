@@ -9,7 +9,6 @@ require "faraday"
 
 %w[
   utils
-  uninitializable
   builder_interface
   configuration_sections
   configuration

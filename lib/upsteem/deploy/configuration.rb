@@ -45,12 +45,12 @@ module Upsteem
       end
       memoize :env_gems_to_update
 
-      def tests
+      def test_suite
         create_section_from_yaml_file(
-          ConfigurationSections::TestsConfiguration, options[:tests]
+          ConfigurationSections::TestSuiteConfiguration, options[:test_suite]
         )
       end
-      memoize :tests
+      memoize :test_suite
 
       def notifications
         create_section_from_yaml_file(
