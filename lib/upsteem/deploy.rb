@@ -3,12 +3,18 @@ require "logger"
 require "git"
 require "fileutils"
 require "memoist"
+require "yaml"
+require "json"
+require "faraday"
 
 %w[
+  builder_interface
+  configuration_sections
   configuration
-  errors
   environment
-  proxies
+  errors
+  services
+  services_container
   tasks
   deployer
   usage

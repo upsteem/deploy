@@ -7,6 +7,7 @@ shared_context "setup for deployment tasks" do
   include_context "sub-task", Upsteem::Deploy::Tasks::GitStatusValidation, :git_status_validation
   include_context "sub-task", Upsteem::Deploy::Tasks::FeatureBranchInclusionFlow, :feature_branch_inclusion_flow
   include_context "sub-task", Upsteem::Deploy::Tasks::GemsUpdateFlow, :gems_update_flow
+  include_context "sub-task", Upsteem::Deploy::Tasks::Notification, :notification
 
   let(:gems_update_flow_occurrences) { 0 }
 
@@ -25,6 +26,10 @@ shared_context "setup for deployment tasks" do
 
   # Override if needed
   def expect_environment_execution; end
+
+  def expect_notification
+    configure_expectation_for_sub_task(:notification)
+  end
 
   shared_context "gems update flow" do
     let(:start_message) { "Starting deployment to #{environment_name} environment in #{project_path}" }
@@ -68,6 +73,7 @@ shared_context "setup for deployment tasks" do
       configure_expectation_for_sub_task(:git_status_validation)
       expect_environment_source_code_update
       expect_environment_execution
+      expect_notification
       end_messages.each { |msg| expect_logger_action(end_message_action, msg) }
     end
   end

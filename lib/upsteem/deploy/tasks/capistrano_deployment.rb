@@ -11,8 +11,10 @@ module Upsteem
 
         private
 
-        def capistrano
-          environment.capistrano
+        attr_reader :capistrano
+
+        def inject(services_container)
+          @capistrano = services_container.capistrano
         end
       end
     end

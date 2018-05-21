@@ -14,6 +14,8 @@ module Upsteem
 
         private
 
+        attr_reader :bundler
+
         def install_gems
           bundler.install_gems
           logger.info("Bundle install OK")
@@ -26,12 +28,12 @@ module Upsteem
         end
 
         def overwrite_gemfile_with_environment_one
-          return unless environment.gemfile_overwrite_needed?
+          return unless environment.gemfile_overwrite_needed
           FileUtils.cp("#{GEMFILE}.#{environment.name}", GEMFILE)
         end
 
-        def bundler
-          environment.bundler
+        def inject(services_container)
+          @bundler = services_container.bundler
         end
       end
     end

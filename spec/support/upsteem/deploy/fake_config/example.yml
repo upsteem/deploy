@@ -1,0 +1,7 @@
+a_config:
+  an_array:
+    - a
+    - b
+    - c
+  a_hash:
+    k: v

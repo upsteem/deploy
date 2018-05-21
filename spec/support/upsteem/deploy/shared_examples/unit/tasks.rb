@@ -3,7 +3,7 @@ shared_context "examples for tasks" do
 
   shared_examples_for "feature branch dependent" do
     describe ".new" do
-      subject { described_class.new(environment) }
+      subject { described_class.new(services_container) }
 
       it { is_expected.to be_instance_of(described_class) }
 
