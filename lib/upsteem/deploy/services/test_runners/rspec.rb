@@ -49,7 +49,11 @@ module Upsteem
 
           def handle_incorrect_passcode(actual_code)
             logger.error("Wrong code: #{actual_code}")
-            raise Upsteem::Deploy::Errors::DeployError, "Cancellation due to failing tests"
+            raise_error("Cancellation due to failing tests")
+          end
+
+          def raise_error(message)
+            raise Errors::FailingTestSuite, message
           end
         end
       end

@@ -89,7 +89,7 @@ describe Upsteem::Deploy::Services::TestRunners::Rspec do
       let(:actual_passcode) { "#{correct_passcode}123" }
 
       let(:predefined_exception) do
-        [Upsteem::Deploy::Errors::DeployError, "Cancellation due to failing tests"]
+        [Upsteem::Deploy::Errors::FailingTestSuite, "Cancellation due to failing tests"]
       end
 
       def expect_events_after_passcode_input
