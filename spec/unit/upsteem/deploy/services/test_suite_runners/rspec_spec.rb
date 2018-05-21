@@ -11,7 +11,7 @@ describe Upsteem::Deploy::Services::TestSuiteRunners::Rspec do
 
   def expect_test_suite_command
     expect_to_receive_exactly_ordered(
-      1, bundler, :execute_command, "rspec_wrong"
+      1, bundler, :execute_command, "rspec"
     )
   end
 
