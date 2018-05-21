@@ -1,102 +1,27 @@
 require "spec_helper"
-Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_for("unit/logger")
+Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_and_examples_for(
+  "unit/services/test_suite_runners/runner"
+)
 
 describe Upsteem::Deploy::Services::TestSuiteRunners::Rspec do
-  include_context "setup for logger"
+  include_context "setup for test suite runner"
+  include_context "examples for test suite runner"
 
-  let(:correct_passcode) { format("%05d", rand(100_000)) }
-  let(:actual_passcode) { correct_passcode }
+  let(:framework) { :rspec }
 
-  let(:configuration) { instance_double("Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration") }
-  let(:bundler) { instance_double("Upsteem::Deploy::Services::Bundler") }
-  let(:logger) { instance_double("Logger") }
-
-  let(:runner) { described_class.new(configuration, bundler, logger) }
-
-  def stub_passcode_generation
-    allow(Upsteem::Deploy::Utils).to receive(:generate_numeric_code).with(5).and_return(correct_passcode)
-  end
-
-  def expect_rspec_command
+  def expect_test_suite_command
     expect_to_receive_exactly_ordered(
-      1, bundler, :execute_command, "rspec"
+      1, bundler, :execute_command, "rspec_wrong"
     )
   end
 
-  def expect_events_after_rspec_command
-    expect_logger_info("Tests successful")
-  end
-
-  shared_context "failing test suite" do
-    let(:bundler_exception_message) { "Command rspec failed with exit status 1" }
-    let(:bundler_exception) do
-      [Upsteem::Deploy::Errors::DeployError, bundler_exception_message]
-    end
-
-    def expect_rspec_command
-      expect_to_receive_exactly_ordered_and_raise(
-        1, bundler, :execute_command, bundler_exception, "rspec"
-      )
-    end
-
-    def expect_events_after_rspec_command
-      expect_logger_error(bundler_exception_message)
-      expect_logger_error("Tests failed")
-      expect_logger_info("")
-      expect_continuation_instructions
-      expect_passcode_input
-      expect_events_after_passcode_input
-    end
-
-    def expect_continuation_instructions
-      expect_logger_info("Your first priority should be stop doing whatever you are doing now and fix the failing tests!")
-      expect_logger_info("Do you still want to proceed with the deploy despite the failing test suite?")
-      expect_logger_info("Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel.")
-    end
-
-    def expect_passcode_input
-      expect_to_receive_exactly_ordered_and_return(
-        1, runner, :gets, " #{actual_passcode}\n"
-      )
-    end
-
-    def expect_events_after_passcode_input
-      expect_logger_info("Ignoring failing test suite and proceeding")
-    end
+  def expect_failing_test_suite_command
+    expect_to_receive_exactly_ordered_and_raise(
+      1, bundler, :execute_command, bundler_exception, "rspec"
+    )
   end
 
   describe "#run_test_suite" do
-    subject { runner.run_test_suite }
-
-    before do
-      stub_passcode_generation
-      expect_logger_info("Starting to run the test suite using rspec")
-      expect_rspec_command
-      expect_events_after_rspec_command
-    end
-
-    it { is_expected.to eq(true) }
-
-    context "when test suite fail and user enters a correct passcode" do
-      include_context "failing test suite"
-
-      it { is_expected.to eq(false) }
-    end
-
-    context "when test suite fail and user enters an incorrect passcode" do
-      include_context "failing test suite"
-
-      let(:actual_passcode) { "#{correct_passcode}123" }
-
-      let(:predefined_exception) do
-        [Upsteem::Deploy::Errors::FailingTestSuite, "Cancellation due to failing test suite"]
-      end
-
-      def expect_events_after_passcode_input
-        expect_logger_error("Wrong code: #{actual_passcode}")
-      end
-
-      it_behaves_like "exception raiser"
-    end
+    it_behaves_like "typical test suite run"
   end
 end

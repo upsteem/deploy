@@ -6,8 +6,9 @@ module Upsteem
           def self.create(configuration, services_container)
             Services::TestSuiteRunners::Rspec.new(
               configuration,
-              services_container.bundler,
-              services_container.logger
+              services_container.logger,
+              services_container.input_service,
+              services_container.bundler
             )
           end
         end
