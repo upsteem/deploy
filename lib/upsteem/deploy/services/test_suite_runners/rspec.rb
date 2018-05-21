@@ -14,12 +14,13 @@ module Upsteem
 
           private
 
-          attr_reader :configuration, :bundler, :logger
+          attr_reader :configuration, :logger, :input_service, :bundler
 
-          def initialize(configuration, bundler, logger)
+          def initialize(configuration, logger, input_service, bundler)
             @configuration = configuration
-            @bundler = bundler
             @logger = logger
+            @input_service = input_service
+            @bundler = bundler
           end
 
           def handle_error(error)
@@ -41,8 +42,9 @@ module Upsteem
           end
 
           def proceed_when_correct_passcode(correct_passcode)
-            logger.info("Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel.")
-            actual_code = gets.strip
+            actual_code = input_service.ask(
+              "Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel."
+            )
             handle_incorrect_passcode(actual_code) unless actual_code == correct_passcode
             logger.info("Ignoring failing test suite and proceeding")
           end

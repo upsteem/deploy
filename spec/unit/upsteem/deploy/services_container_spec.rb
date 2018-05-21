@@ -15,6 +15,7 @@ describe Upsteem::Deploy::ServicesContainer do
   let(:custom_logger) { instance_double("Logger", "custom") }
   let(:logger) { custom_logger }
 
+  let(:input_service) { instance_double("Upsteem::Deploy::Services::StandardInputService") }
   let(:system) { instance_double("Upsteem::Deploy::Services::System") }
   let(:bundler) { instance_double("Upsteem::Deploy::Services::Bundler") }
   let(:capistrano) { instance_double("Upsteem::Deploy::Services::Capistrano") }
@@ -42,6 +43,12 @@ describe Upsteem::Deploy::ServicesContainer do
 
   def stub_custom_logger
     allow(configuration).to receive(:logger).once.and_return(custom_logger)
+  end
+
+  def stub_input_service
+    allow(Upsteem::Deploy::Services::StandardInputService).to receive(:new).once.with(
+      logger
+    ).and_return(input_service)
   end
 
   def stub_system
@@ -80,6 +87,7 @@ describe Upsteem::Deploy::ServicesContainer do
     stub_notifications_configuration
     stub_default_logger
     stub_custom_logger
+    stub_input_service
     stub_system
     stub_bundler
     stub_capistrano
@@ -106,6 +114,15 @@ describe Upsteem::Deploy::ServicesContainer do
       let(:custom_logger) { nil }
       it { is_expected.to eq(default_logger) }
     end
+  end
+
+  describe "#input_service" do
+    subject do
+      container.input_service
+      container.input_service
+    end
+
+    it { is_expected.to eq(input_service) }
   end
 
   describe "#system" do

@@ -8,10 +8,11 @@ describe Upsteem::Deploy::Services::TestSuiteRunners::Rspec do
   let(:actual_passcode) { correct_passcode }
 
   let(:configuration) { instance_double("Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration") }
-  let(:bundler) { instance_double("Upsteem::Deploy::Services::Bundler") }
   let(:logger) { instance_double("Logger") }
+  let(:input_service) { instance_double("Upsteem::Deploy::Services::StandardInputService") }
+  let(:bundler) { instance_double("Upsteem::Deploy::Services::Bundler") }
 
-  let(:runner) { described_class.new(configuration, bundler, logger) }
+  let(:runner) { described_class.new(configuration, logger, input_service, bundler) }
 
   def stub_passcode_generation
     allow(Upsteem::Deploy::Utils).to receive(:generate_numeric_code).with(5).and_return(correct_passcode)
@@ -51,12 +52,12 @@ describe Upsteem::Deploy::Services::TestSuiteRunners::Rspec do
     def expect_continuation_instructions
       expect_logger_info("Your first priority should be stop doing whatever you are doing now and fix the failing tests!")
       expect_logger_info("Do you still want to proceed with the deploy despite the failing test suite?")
-      expect_logger_info("Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel.")
     end
 
     def expect_passcode_input
       expect_to_receive_exactly_ordered_and_return(
-        1, runner, :gets, " #{actual_passcode}\n"
+        1, input_service, :ask, actual_passcode,
+        "Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel."
       )
     end
 

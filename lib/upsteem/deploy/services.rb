@@ -1,4 +1,5 @@
 %w[
+  standard_input_service
   system
   bundler
   capistrano
