@@ -19,8 +19,6 @@ describe Upsteem::Deploy::Factories::TestSuiteRunners::SkipperFactory do
     ).and_return(service)
   end
 
-  it_behaves_like "uninitializable"
-
   describe ".create" do
     subject { described_class.create(configuration, services_container) }
 

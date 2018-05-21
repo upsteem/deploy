@@ -24,8 +24,6 @@ describe Upsteem::Deploy::Factories::TestSuiteRunners::RspecFactory do
     ).and_return(service)
   end
 
-  it_behaves_like "uninitializable"
-
   describe ".create" do
     subject { described_class.create(configuration, services_container) }
 

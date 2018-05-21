@@ -8,9 +8,7 @@ end
 module Upsteem
   module Deploy
     module Factories
-      class TestSuiteRunnerFactory
-        extend Uninitializable
-
+      module TestSuiteRunnerFactory
         SKIPPER_FACTORY = Factories::TestSuiteRunners::SkipperFactory
 
         RUNNER_FACTORIES = {

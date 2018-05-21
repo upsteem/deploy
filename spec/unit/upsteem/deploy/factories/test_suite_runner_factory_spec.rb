@@ -27,8 +27,6 @@ describe Upsteem::Deploy::Factories::TestSuiteRunnerFactory do
     ).and_return(test_suite_runner)
   end
 
-  it_behaves_like "uninitializable"
-
   describe ".create" do
     subject { described_class.create(configuration, services_container) }
 
