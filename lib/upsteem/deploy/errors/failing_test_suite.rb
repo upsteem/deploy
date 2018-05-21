@@ -1,7 +1,7 @@
 module Upsteem
   module Deploy
     module Errors
-      class FailingTestSuite < RuntimeError
+      class FailingTestSuite < DeployError
       end
     end
   end
