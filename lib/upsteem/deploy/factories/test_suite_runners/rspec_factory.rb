@@ -1,12 +1,12 @@
 module Upsteem
   module Deploy
     module Factories
-      module TestRunners
+      module TestSuiteRunners
         class RspecFactory
           extend Uninitializable
 
           def self.create(configuration, services_container)
-            Services::TestRunners::Rspec.new(
+            Services::TestSuiteRunners::Rspec.new(
               configuration,
               services_container.bundler,
               services_container.logger

@@ -35,10 +35,10 @@ module Upsteem
       end
       memoize :notifier
 
-      def test_runner
-        Factories::TestRunnerFactory.create(configuration.tests, self)
+      def test_suite_runner
+        Factories::TestSuiteRunnerFactory.create(configuration.test_suite, self)
       end
-      memoize :test_runner
+      memoize :test_suite_runner
 
       private
 

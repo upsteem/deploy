@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Upsteem::Deploy::ConfigurationSections::TestsConfiguration do
+describe Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration do
   let(:framework) { "sometestframework" }
 
   let(:data) do

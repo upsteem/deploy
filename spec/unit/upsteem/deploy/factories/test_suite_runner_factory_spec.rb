@@ -1,11 +1,11 @@
 require "spec_helper"
 
-describe Upsteem::Deploy::Factories::TestRunnerFactory do
+describe Upsteem::Deploy::Factories::TestSuiteRunnerFactory do
   let(:framework) { :rspec }
-  let(:sub_factory) { Upsteem::Deploy::Factories::TestRunners::RspecFactory }
-  let(:test_runner) { instance_double("Upsteem::Deploy::Services::TestRunners::Rspec") }
+  let(:sub_factory) { Upsteem::Deploy::Factories::TestSuiteRunners::RspecFactory }
+  let(:test_suite_runner) { instance_double("Upsteem::Deploy::Services::TestSuiteRunners::Rspec") }
 
-  let(:configuration) { instance_double("Upsteem::Deploy::ConfigurationSections::TestsConfiguration") }
+  let(:configuration) { instance_double("Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration") }
   let(:services_container) { instance_double("Upsteem::Deploy::ServicesContainer") }
 
   def stub_framework_from_configuration
@@ -17,14 +17,14 @@ describe Upsteem::Deploy::Factories::TestRunnerFactory do
   end
 
   shared_context "skipper creation" do
-    let(:sub_factory) { Upsteem::Deploy::Factories::TestRunners::SkipperFactory }
-    let(:test_runner) { instance_double("Upsteem::Deploy::Services::TestRunners::Skipper") }
+    let(:sub_factory) { Upsteem::Deploy::Factories::TestSuiteRunners::SkipperFactory }
+    let(:test_suite_runner) { instance_double("Upsteem::Deploy::Services::TestSuiteRunners::Skipper") }
   end
 
   def stub_creation_by_sub_factory
     allow(sub_factory).to receive(:create).with(
       configuration, services_container
-    ).and_return(test_runner)
+    ).and_return(test_suite_runner)
   end
 
   it_behaves_like "uninitializable"
@@ -37,13 +37,13 @@ describe Upsteem::Deploy::Factories::TestRunnerFactory do
       stub_creation_by_sub_factory
     end
 
-    it { is_expected.to eq(test_runner) }
+    it { is_expected.to eq(test_suite_runner) }
 
     context "when test run disabled via configuration" do
       include_context "skipper creation"
       let(:framework) { :not_applicable }
 
-      it { is_expected.to eq(test_runner) }
+      it { is_expected.to eq(test_suite_runner) }
     end
 
     context "when configuration missing" do
@@ -52,7 +52,7 @@ describe Upsteem::Deploy::Factories::TestRunnerFactory do
 
       def stub_configuration_attributes; end
 
-      it { is_expected.to eq(test_runner) }
+      it { is_expected.to eq(test_suite_runner) }
     end
 
     context "when unsupported framework configured" do

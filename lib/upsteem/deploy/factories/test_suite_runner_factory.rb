@@ -2,19 +2,19 @@
   skipper_factory
   rspec_factory
 ].each do |file|
-  require_relative("test_runners/#{file}")
+  require_relative("test_suite_runners/#{file}")
 end
 
 module Upsteem
   module Deploy
     module Factories
-      class TestRunnerFactory
+      class TestSuiteRunnerFactory
         extend Uninitializable
 
-        SKIPPER_FACTORY = Factories::TestRunners::SkipperFactory
+        SKIPPER_FACTORY = Factories::TestSuiteRunners::SkipperFactory
 
         RUNNER_FACTORIES = {
-          rspec: Factories::TestRunners::RspecFactory,
+          rspec: Factories::TestSuiteRunners::RspecFactory,
           not_applicable: SKIPPER_FACTORY
         }.freeze
 

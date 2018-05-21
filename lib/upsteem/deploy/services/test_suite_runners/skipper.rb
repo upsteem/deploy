@@ -1,10 +1,10 @@
 module Upsteem
   module Deploy
     module Services
-      module TestRunners
+      module TestSuiteRunners
         class Skipper < Base
-          def run_tests
-            logger.info("Running tests during deploy has not been enabled for this project")
+          def run_test_suite
+            logger.info("Test suite running during deploy has not been enabled for this project")
             nil
           end
 

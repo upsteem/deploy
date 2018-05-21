@@ -2,8 +2,8 @@ require "spec_helper"
 
 describe Upsteem::Deploy::ServicesContainer do
   let(:project_path) { "/path/to/project" }
-  let(:tests_configuration) do
-    instance_double("Upsteem::Deploy::ConfigurationSections::TestsConfiguration")
+  let(:test_suite_configuration) do
+    instance_double("Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration")
   end
   let(:notifications_configuration) do
     instance_double("Upsteem::Deploy::ConfigurationSections::NotificationConfiguration")
@@ -19,7 +19,7 @@ describe Upsteem::Deploy::ServicesContainer do
   let(:bundler) { instance_double("Upsteem::Deploy::Services::Bundler") }
   let(:capistrano) { instance_double("Upsteem::Deploy::Services::Capistrano") }
   let(:git) { instance_double("Upsteem::Deploy::Services::VerboseGit") }
-  let(:test_runner) { instance_double("Upsteem::Deploy::Services::TestRunners::Base") }
+  let(:test_suite_runner) { instance_double("Upsteem::Deploy::Services::TestSuiteRunners::Base") }
   let(:notifier) { instance_double("Upsteem::Deploy::Services::Notifier") }
 
   let(:container) { described_class.new(configuration, environment) }
@@ -28,8 +28,8 @@ describe Upsteem::Deploy::ServicesContainer do
     allow(configuration).to receive(:project_path).and_return(project_path)
   end
 
-  def stub_tests_configuration
-    allow(configuration).to receive(:tests).and_return(tests_configuration)
+  def stub_test_suite_configuration
+    allow(configuration).to receive(:test_suite).and_return(test_suite_configuration)
   end
 
   def stub_notifications_configuration
@@ -62,10 +62,10 @@ describe Upsteem::Deploy::ServicesContainer do
     ).once.and_return(git)
   end
 
-  def stub_test_runner
-    allow(Upsteem::Deploy::Factories::TestRunnerFactory).to receive(:create).with(
-      tests_configuration, container
-    ).once.and_return(test_runner)
+  def stub_test_suite_runner
+    allow(Upsteem::Deploy::Factories::TestSuiteRunnerFactory).to receive(:create).with(
+      test_suite_configuration, container
+    ).once.and_return(test_suite_runner)
   end
 
   def stub_notifier
@@ -76,7 +76,7 @@ describe Upsteem::Deploy::ServicesContainer do
 
   before do
     stub_project_path
-    stub_tests_configuration
+    stub_test_suite_configuration
     stub_notifications_configuration
     stub_default_logger
     stub_custom_logger
@@ -84,7 +84,7 @@ describe Upsteem::Deploy::ServicesContainer do
     stub_bundler
     stub_capistrano
     stub_git
-    stub_test_runner
+    stub_test_suite_runner
     stub_notifier
   end
 
@@ -144,13 +144,13 @@ describe Upsteem::Deploy::ServicesContainer do
     it { is_expected.to eq(git) }
   end
 
-  describe "#test_runner" do
+  describe "#test_suite_runner" do
     subject do
-      container.test_runner
-      container.test_runner
+      container.test_suite_runner
+      container.test_suite_runner
     end
 
-    it { is_expected.to eq(test_runner) }
+    it { is_expected.to eq(test_suite_runner) }
   end
 
   describe "#notifier" do
