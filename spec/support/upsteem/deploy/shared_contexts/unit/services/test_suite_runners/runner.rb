@@ -75,13 +75,11 @@ shared_context "setup for test suite runner" do
     def expect_continuation_instructions
       expect_logger_info("Your first priority should be stop doing whatever you are doing now and fix the failing tests!")
       expect_logger_info("Do you still want to proceed with the deploy despite the failing test suite?")
+      expect_logger_info("Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel.")
     end
 
     def expect_passcode_input
-      expect_to_receive_exactly_ordered_and_return(
-        1, input_service, :ask, actual_passcode,
-        "Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel."
-      )
+      expect_to_receive_exactly_ordered_and_return(1, input_service, :read, actual_passcode)
     end
 
     def expect_events_after_passcode_input
