@@ -52,9 +52,8 @@ module Upsteem
           end
 
           def proceed_when_correct_passcode(correct_passcode)
-            actual_code = input_service.ask(
-              "Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel."
-            )
+            logger.info("Please insert the following code to proceed: #{correct_passcode}. Or hit enter right away to cancel.")
+            actual_code = input_service.read
             handle_incorrect_passcode(actual_code) unless actual_code == correct_passcode
             logger.info("Ignoring failing test suite and proceeding")
           end

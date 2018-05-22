@@ -47,7 +47,7 @@ describe Upsteem::Deploy::ServicesContainer do
 
   def stub_input_service
     allow(Upsteem::Deploy::Services::StandardInputService).to receive(:new).once.with(
-      logger
+      no_args
     ).and_return(input_service)
   end
 

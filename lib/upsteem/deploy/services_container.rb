@@ -11,7 +11,7 @@ module Upsteem
       memoize :logger
 
       def input_service
-        Services::StandardInputService.new(logger)
+        Services::StandardInputService.new
       end
       memoize :input_service
 
