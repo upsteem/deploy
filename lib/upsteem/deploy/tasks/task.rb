@@ -23,6 +23,7 @@ module Upsteem
           @environment = services_container.environment
           @logger = services_container.logger
           @git = services_container.git
+          @rollbacker = services_container.rollbacker
           inject(services_container)
         end
 

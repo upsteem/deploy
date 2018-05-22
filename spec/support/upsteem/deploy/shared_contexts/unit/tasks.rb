@@ -8,6 +8,7 @@ shared_context "setup for tasks" do
   let(:environment) { instance_double("Upsteem::Deploy::Environment") }
   let(:logger) { instance_double("Logger") }
   let(:git_service) { instance_double("Upsteem::Deploy::Services::VerboseGit") }
+  let(:rollbacker_service) { instance_double("Upsteem::Deploy::Services::Rollbacker") }
 
   let(:services_container) { instance_double("Upsteem::Deploy::ServicesContainer") }
 
@@ -44,6 +45,10 @@ shared_context "setup for tasks" do
 
   def allow_git_service_from_services_container
     allow(services_container).to receive(:git).and_return(git_service)
+  end
+
+  def allow_rollbacker_service_from_services_container
+    allow(services_container).to receive(:rollbacker).and_return(rollbacker_service)
   end
 
   def sub_task_helper(label, name = nil)
@@ -181,5 +186,6 @@ shared_context "setup for tasks" do
     allow_feature_branch_from_environment
     allow_logger_from_services_container
     allow_git_service_from_services_container
+    allow_rollbacker_service_from_services_container
   end
 end
