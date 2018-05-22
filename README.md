@@ -40,6 +40,22 @@ as an option:
 ```ruby
 Upsteem::Deploy.deploy_application(
   File.dirname(__FILE__), ARGV[0], ARGV[1],
-  notifications: "config/deploy_notifications.yml"
+  notifications: "config/deploy/notifications.yml"
 )
+```
+
+## When test suite needs to be run during deploy
+YAML configuration file path should be supplied via `:test_suite` option:
+
+```ruby
+Upsteem::Deploy.deploy_application(
+  File.dirname(__FILE__), ARGV[0], ARGV[1],
+  test_suite: "config/deploy/test_suite.yml"
+)
+```
+
+### Sample data in configuration file:
+
+```
+framework: rspec
 ```
