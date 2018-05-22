@@ -6,7 +6,7 @@ module Upsteem
 
         def run
           git.must_be_current_branch!(target_branch)
-          run_test_suite
+          test_suite_runner.run_test_suite
           commit
           push
           true
@@ -28,17 +28,6 @@ module Upsteem
           options[:message] || raise(ArgumentError, "Commit message not supplied via :message option")
         end
         memoize :commit_message
-
-        def run_test_suite
-          test_suite_runner.run_test_suite
-        rescue Errors::FailingTestSuite => e
-          handle_failing_test_suite
-          raise(e)
-        end
-
-        def handle_failing_test_suite
-          git.abort_merge
-        end
 
         def commit
           git.commit(commit_message, all: true)

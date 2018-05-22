@@ -4,6 +4,9 @@ Upsteem::Deploy::SpecHelperLoader.require_shared_contexts_for("unit/logger")
 describe Upsteem::Deploy::Services::Rollbacker do
   include_context "setup for logger"
 
+  let(:reason_class) { Upsteem::Deploy::Errors::DeployError }
+  let(:reason_message) { "Something went wrong" }
+  let(:reason) { reason_class.new(reason_message) }
   let(:feature_branch) { "somefeaturebranch" }
 
   let(:logger) { instance_double("Logger") }
@@ -14,6 +17,15 @@ describe Upsteem::Deploy::Services::Rollbacker do
 
   def stub_feature_branch_from_environment
     allow(environment).to receive(:feature_branch).and_return(feature_branch)
+  end
+
+  def expect_rollback_reason_logging
+    expect_logger_info("Rollback reason: #{reason_message} (#{reason_class})")
+  end
+
+  def expect_events_before_rollback_actions
+    expect_rollback_reason_logging
+    expect_logger_info("Trying to roll back pending changes for the local repository")
   end
 
   def expect_abort_merge
@@ -28,15 +40,28 @@ describe Upsteem::Deploy::Services::Rollbacker do
     expect_logger_info("Rollback done")
   end
 
+  def expect_pending_changes_disclaimer
+    expect_logger_info(
+      "If there are any pending changes for the local repository, you'll have to revert them manually!"
+    )
+    expect_logger_info(
+      "Also, you might need to check your current branch as well before you continue investigation!"
+    )
+  end
+
+  def expect_rollback_events
+    expect_events_before_rollback_actions
+    expect_abort_merge
+    expect_feature_branch_checkout
+    expect_events_after_rollback_actions
+  end
+
   describe "#rollback" do
-    subject { rollbacker.rollback }
+    subject { rollbacker.rollback(reason) }
 
     before do
       stub_feature_branch_from_environment
-      expect_logger_info("Trying to roll back pending changes for the local repository")
-      expect_abort_merge
-      expect_feature_branch_checkout
-      expect_events_after_rollback_actions
+      expect_rollback_events
     end
 
     shared_examples_for "success" do
@@ -62,9 +87,7 @@ describe Upsteem::Deploy::Services::Rollbacker do
 
       def expect_events_after_rollback_actions
         expect_logger_error("#{merge_abortion_error_message} (#{merge_abortion_error_class})")
-        expect_logger_error(
-          "If there are any pending changes for the local repository, you'll have to revert them manually!"
-        )
+        expect_pending_changes_disclaimer
       end
 
       it_behaves_like "exception raiser"
@@ -76,10 +99,13 @@ describe Upsteem::Deploy::Services::Rollbacker do
     context "when there is no feature branch" do
       let(:feature_branch) { nil }
 
-      def expect_feature_branch_checkout; end
+      def expect_rollback_events
+        expect_rollback_reason_logging
+        expect_logger_info("Not able to rollback anything, since there is no feature branch")
+        expect_pending_changes_disclaimer
+      end
 
-      it_behaves_like "success"
-      it_behaves_like "failure at merge abortion"
+      it { is_expected.to eq(false) }
     end
   end
 end

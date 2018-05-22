@@ -25,9 +25,6 @@ describe Upsteem::Deploy::Tasks::TargetBranchUpload do
     allow(git_service).to receive(:current_branch).and_return(current_branch)
   end
 
-  # Override when testing a failure flow.
-  def expect_failure_events; end
-
   def expect_test_suite_run
     expect_to_receive_exactly_ordered(
       test_suite_running_occurrences, test_suite_runner_service, :run_test_suite
@@ -46,10 +43,6 @@ describe Upsteem::Deploy::Tasks::TargetBranchUpload do
       expect_to_receive_exactly_ordered_and_raise(
         test_suite_running_occurrences, test_suite_runner_service, :run_test_suite, predefined_exception
       )
-    end
-
-    def expect_failure_events
-      expect_to_receive_exactly_ordered(1, git_service, :abort_merge)
     end
   end
 
@@ -77,7 +70,6 @@ describe Upsteem::Deploy::Tasks::TargetBranchUpload do
       expect_test_suite_run
       expect_git_commit
       expect_git_push
-      expect_failure_events
     end
 
     it_behaves_like "normal run"
