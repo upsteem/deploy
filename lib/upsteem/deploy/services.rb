@@ -5,6 +5,7 @@
   capistrano
   git
   verbose_git
+  rollbacker
   test_suite_runners
   notifier
 ].each do |file|

@@ -30,7 +30,6 @@ module Upsteem
 
         def handle_merge_conflict(error)
           logger.error("Feature branch merging into #{environment.name} failed due to merge conflict")
-          git.abort_merge
           raise error
         end
       end

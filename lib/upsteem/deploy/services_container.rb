@@ -35,6 +35,11 @@ module Upsteem
       end
       memoize :git
 
+      def rollbacker
+        Services::Rollbacker.new(logger, git, environment)
+      end
+      memoize :rollbacker
+
       def notifier
         Services::Notifier.new(configuration.notifications, environment, logger, git)
       end

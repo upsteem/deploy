@@ -174,6 +174,18 @@ shared_context "setup for tasks" do
   shared_context "git operations" do
   end
 
+  shared_context "rollbacker operations" do
+    let(:rollbacker_service) { instance_double("Upsteem::Deploy::Services::Rollbacker") }
+
+    def allow_rollbacker_service_from_services_container
+      allow(services_container).to receive(:rollbacker).and_return(rollbacker_service)
+    end
+
+    before do
+      allow_rollbacker_service_from_services_container
+    end
+  end
+
   before do
     allow_environment_from_services_container
     allow_name_from_environment

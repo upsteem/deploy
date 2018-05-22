@@ -14,8 +14,7 @@ module Upsteem
           log_success
           true
         rescue Errors::DeployError => e
-          log_failure(e)
-          false
+          handle_error(e)
         end
 
         private
@@ -46,6 +45,12 @@ module Upsteem
 
         def notify
           run_sub_task(Tasks::Notification)
+        end
+
+        def handle_error(error)
+          run_sub_task(Tasks::Rollback, cause: error)
+          log_failure(error)
+          false
         end
 
         def log_start
