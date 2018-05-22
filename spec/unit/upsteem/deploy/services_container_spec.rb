@@ -20,6 +20,7 @@ describe Upsteem::Deploy::ServicesContainer do
   let(:bundler) { instance_double("Upsteem::Deploy::Services::Bundler") }
   let(:capistrano) { instance_double("Upsteem::Deploy::Services::Capistrano") }
   let(:git) { instance_double("Upsteem::Deploy::Services::VerboseGit") }
+  let(:rollbacker) { instance_double("Upsteem::Deploy::Services::Rollbacker") }
   let(:test_suite_runner) { instance_double("Upsteem::Deploy::Services::TestSuiteRunners::Base") }
   let(:notifier) { instance_double("Upsteem::Deploy::Services::Notifier") }
 
@@ -69,6 +70,12 @@ describe Upsteem::Deploy::ServicesContainer do
     ).once.and_return(git)
   end
 
+  def stub_rollbacker
+    allow(Upsteem::Deploy::Services::Rollbacker).to receive(:new).with(
+      logger, git, environment
+    ).once.and_return(rollbacker)
+  end
+
   def stub_test_suite_runner
     allow(Upsteem::Deploy::Factories::TestSuiteRunnerFactory).to receive(:create).with(
       test_suite_configuration, container
@@ -92,6 +99,7 @@ describe Upsteem::Deploy::ServicesContainer do
     stub_bundler
     stub_capistrano
     stub_git
+    stub_rollbacker
     stub_test_suite_runner
     stub_notifier
   end
@@ -159,6 +167,15 @@ describe Upsteem::Deploy::ServicesContainer do
     end
 
     it { is_expected.to eq(git) }
+  end
+
+  describe "#rollbacker" do
+    subject do
+      container.rollbacker
+      container.rollbacker
+    end
+
+    it { is_expected.to eq(rollbacker) }
   end
 
   describe "#test_suite_runner" do
