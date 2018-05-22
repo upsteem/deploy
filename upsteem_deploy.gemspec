@@ -2,7 +2,7 @@ Gem::Specification.new do |gem|
   gem.files         = Dir["lib/**/*"]
   gem.name          = "upsteem-deploy"
   gem.summary       = "Upsteem deployment procedure"
-  gem.version       = "0.1.0"
+  gem.version       = "0.2.0"
 
   gem.authors       = ["Kristjan Uibo"]
   gem.email         = ["kristjan.uibo@upsteem.com"]
