@@ -3,7 +3,7 @@ PATH
   specs:
     upsteem-deploy (0.2.0)
       activesupport (~> 4.2)
-      faraday (~> 0.15)
+      faraday (>= 0.8)
       git (~> 1.3.0)
       memoist (~> 0.14.0)
 
