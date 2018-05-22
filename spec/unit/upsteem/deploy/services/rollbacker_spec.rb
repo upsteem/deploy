@@ -45,7 +45,7 @@ describe Upsteem::Deploy::Services::Rollbacker do
       "If there are any pending changes for the local repository, you'll have to revert them manually!"
     )
     expect_logger_info(
-      "Also, you might need to check your current branch as well before you continue investigation!"
+      "Also you might need to check your current branch as well before you continue investigation!"
     )
   end
 
