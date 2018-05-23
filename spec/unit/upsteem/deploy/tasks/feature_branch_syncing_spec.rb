@@ -38,7 +38,6 @@ describe Upsteem::Deploy::Tasks::FeatureBranchSyncing do
           1, git_service, :create_merge_commit, predefined_exception, "origin/master"
         )
         expect_logger_action(:error, "Syncing failed due to merge conflict")
-        expect_to_receive_exactly_ordered(1, git_service, :abort_merge)
       end
 
       it_behaves_like "error run"

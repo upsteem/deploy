@@ -1,6 +1,7 @@
 %w[
   task
 
+  rollback
   git_status_validation
   target_branch_download
   bundle

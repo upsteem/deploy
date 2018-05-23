@@ -6,12 +6,19 @@ module Upsteem
 
         def run
           git.must_be_current_branch!(target_branch)
+          test_suite_runner.run_test_suite
           commit
           push
           true
         end
 
         private
+
+        attr_reader :test_suite_runner
+
+        def inject(services_container)
+          @test_suite_runner = services_container.test_suite_runner
+        end
 
         def after_initialize
           commit_message
