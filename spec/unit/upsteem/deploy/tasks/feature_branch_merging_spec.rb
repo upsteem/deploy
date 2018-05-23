@@ -38,7 +38,6 @@ describe Upsteem::Deploy::Tasks::FeatureBranchMerging do
           1, git_service, :create_merge_commit, predefined_exception, "origin/#{feature_branch}"
         )
         expect_logger_action(:error, "Feature branch merging into #{environment_name} failed due to merge conflict")
-        expect_to_receive_exactly_ordered(1, git_service, :abort_merge)
       end
 
       it_behaves_like "error run"

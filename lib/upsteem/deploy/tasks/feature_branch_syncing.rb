@@ -43,7 +43,6 @@ module Upsteem
 
         def handle_merge_conflict(error)
           logger.error("Syncing failed due to merge conflict")
-          git.abort_merge
           raise error
         end
       end

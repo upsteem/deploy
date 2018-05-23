@@ -8,6 +8,7 @@ shared_context "setup for deployment tasks" do
   include_context "sub-task", Upsteem::Deploy::Tasks::FeatureBranchInclusionFlow, :feature_branch_inclusion_flow
   include_context "sub-task", Upsteem::Deploy::Tasks::GemsUpdateFlow, :gems_update_flow
   include_context "sub-task", Upsteem::Deploy::Tasks::Notification, :notification
+  include_context "sub-task", Upsteem::Deploy::Tasks::Rollback, :rollback
 
   let(:gems_update_flow_occurrences) { 0 }
 
@@ -30,6 +31,9 @@ shared_context "setup for deployment tasks" do
   def expect_notification
     configure_expectation_for_sub_task(:notification)
   end
+
+  # Override for failure flow.
+  def expect_rollback_on_failure; end
 
   shared_context "gems update flow" do
     let(:start_message) { "Starting deployment to #{environment_name} environment in #{project_path}" }
@@ -55,6 +59,12 @@ shared_context "setup for deployment tasks" do
     let("#{sub_task_label}_error".to_sym) do
       [klass, msg]
     end
+
+    let(:rollback_options) { { cause: instance_of(Upsteem::Deploy::Errors::DeployError) } }
+
+    def expect_rollback_on_failure
+      configure_expectation_for_sub_task(:rollback)
+    end
   end
 
   shared_context "occurrence of exception with cause" do |sub_task_label, klass, msg, cause|
@@ -74,6 +84,7 @@ shared_context "setup for deployment tasks" do
       expect_environment_source_code_update
       expect_environment_execution
       expect_notification
+      expect_rollback_on_failure
       end_messages.each { |msg| expect_logger_action(end_message_action, msg) }
     end
   end

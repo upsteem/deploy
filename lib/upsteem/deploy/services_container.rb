@@ -10,6 +10,11 @@ module Upsteem
       end
       memoize :logger
 
+      def input_service
+        Services::StandardInputService.new
+      end
+      memoize :input_service
+
       def system
         Services::System.new
       end
@@ -30,10 +35,20 @@ module Upsteem
       end
       memoize :git
 
+      def rollbacker
+        Services::Rollbacker.new(logger, git, environment)
+      end
+      memoize :rollbacker
+
       def notifier
         Services::Notifier.new(configuration.notifications, environment, logger, git)
       end
       memoize :notifier
+
+      def test_suite_runner
+        Factories::TestSuiteRunnerFactory.create(configuration.test_suite, self)
+      end
+      memoize :test_suite_runner
 
       private
 

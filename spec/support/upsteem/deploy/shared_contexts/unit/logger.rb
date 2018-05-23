@@ -8,4 +8,8 @@ shared_context "setup for logger" do
   def expect_logger_info(message, times = 1)
     expect_logger_action(:info, message, times)
   end
+
+  def expect_logger_error(message, times = 1)
+    expect_logger_action(:error, message, times)
+  end
 end

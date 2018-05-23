@@ -8,6 +8,9 @@ describe Upsteem::Deploy::Configuration do
 
   let(:logger) { instance_double("Logger") }
 
+  let(:test_suite_config_file_path) { "config/test_suite.yml" }
+  let(:test_suite_section) { instance_double("Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration") }
+
   let(:notifications_config_file_path) { "config/notifications.yml" }
   let(:notifications_section) { instance_double("Upsteem::Deploy::ConfigurationSections::NotificationConfiguration") }
 
@@ -19,14 +22,36 @@ describe Upsteem::Deploy::Configuration do
     let(:configuration) { described_class.set_up(project_path_as_arg, options) }
   end
 
-  before do
+  def stub_project_path_validation
     allow(File).to receive(:directory?).with(project_path).and_return(project_path_is_directory)
+  end
+
+  def stub_configuration_section_creation(section_class, config_file_path, section)
     allow(Upsteem::Deploy::ConfigurationSections::Factory).to receive(
       :create_from_yaml_file
     ).once.with(
+      section_class, project_path, config_file_path
+    ).and_return(section)
+  end
+
+  def stub_notifications_configuration_creation
+    stub_configuration_section_creation(
       Upsteem::Deploy::ConfigurationSections::NotificationConfiguration,
-      project_path, notifications_config_file_path
-    ).and_return(notifications_section)
+      notifications_config_file_path, notifications_section
+    )
+  end
+
+  def stub_test_suite_configuration_creation
+    stub_configuration_section_creation(
+      Upsteem::Deploy::ConfigurationSections::TestSuiteConfiguration,
+      test_suite_config_file_path, test_suite_section
+    )
+  end
+
+  before do
+    stub_project_path_validation
+    stub_notifications_configuration_creation
+    stub_test_suite_configuration_creation
   end
 
   describe ".new" do
@@ -209,6 +234,27 @@ describe Upsteem::Deploy::Configuration do
       include_context "custom instance"
 
       it { is_expected.to eq(%w[gem1 gem2 gem3]) }
+    end
+  end
+
+  describe "#test_suite" do
+    subject do
+      configuration.test_suite
+      configuration.test_suite
+    end
+
+    context "when options not given" do
+      include_context "default instance"
+      let(:test_suite_config_file_path) { nil }
+
+      it { is_expected.to eq(test_suite_section) }
+    end
+
+    context "when options given" do
+      let(:options) { { test_suite: test_suite_config_file_path } }
+      include_context "custom instance"
+
+      it { is_expected.to eq(test_suite_section) }
     end
   end
 
