@@ -52,10 +52,22 @@ describe Upsteem::Deploy::Configuration do
       it { is_expected.to eq(%w[dev staging production]) }
     end
 
-    context "when option given" do
+    context "when option with the same name given" do
       let(:options) { { supported_environments: %w[foo bar baz] } }
 
       it_behaves_like "constant returner"
+    end
+
+    context "when target_branches option given" do
+      let(:options) { { target_branches: { "foo" => "bar", baz: "etc" } } }
+
+      it_behaves_like "constant returner"
+    end
+
+    context "when additional_target_branches option given" do
+      let(:options) { { additional_target_branches: { "foo" => "bar", baz: "etc" } } }
+
+      it { is_expected.to eq(%w[dev staging production foo baz]) }
     end
   end
 
@@ -70,15 +82,34 @@ describe Upsteem::Deploy::Configuration do
       it_behaves_like "checker", "dev", true
       it_behaves_like "checker", "staging", true
       it_behaves_like "checker", "production", true
+      it_behaves_like "checker", "master", false
       it_behaves_like "checker", "foo", false
     end
 
     it_behaves_like "checker against constant"
 
-    context "when option given" do
+    context "when supported_environments option given" do
       let(:options) { { supported_environments: %w[foo bar baz] } }
 
       it_behaves_like "checker against constant"
+    end
+
+    context "when target_branches option given" do
+      let(:options) { { target_branches: { "foo" => "bar", baz: "etc" } } }
+
+      it_behaves_like "checker against constant"
+    end
+
+    context "when additional_target_branches option given" do
+      let(:options) { { additional_target_branches: { "foo" => "bar", baz: "etc" } } }
+
+      it_behaves_like "checker", "dev", true
+      it_behaves_like "checker", "staging", true
+      it_behaves_like "checker", "production", true
+      it_behaves_like "checker", "foo", true
+      it_behaves_like "checker", "bar", false
+      it_behaves_like "checker", "baz", true
+      it_behaves_like "checker", "etc", false
     end
   end
 
@@ -109,10 +140,24 @@ describe Upsteem::Deploy::Configuration do
 
     it_behaves_like "finder from constant"
 
-    context "when option given" do
+    context "when target_branches option given" do
       let(:options) { { target_branches: { "foo" => "bar" } } }
 
       it_behaves_like "finder from constant"
+    end
+
+    context "when additional_target_branches option given" do
+      let(:options) { { additional_target_branches: { "foo" => "bar", baz: "etc" } } }
+
+      it_behaves_like "found", "dev", "dev"
+      it_behaves_like "found", "staging", "staging"
+      it_behaves_like "found", "production", "master"
+      it_behaves_like "found", "foo", "bar"
+      it_behaves_like "found", "baz", "etc"
+      it_behaves_like "not found", "bar"
+      it_behaves_like "not found", "etc"
+      it_behaves_like "not found", ""
+      it_behaves_like "not found", nil
     end
   end
 

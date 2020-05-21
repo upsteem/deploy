@@ -67,9 +67,13 @@ module Upsteem
       end
 
       def target_branches
-        TARGET_BRANCHES
+        TARGET_BRANCHES.merge(additional_target_branches.stringify_keys)
       end
       memoize :target_branches
+
+      def additional_target_branches
+        options[:additional_target_branches] || {}
+      end
 
       def create_section_from_yaml_file(klass, file_path)
         ConfigurationSections::Factory.create_from_yaml_file(klass, project_path, file_path)
