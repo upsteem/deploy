@@ -1,11 +1,9 @@
-require "spec_helper"
-
 describe Upsteem::Deploy::Deployer do
   let(:task_class) { class_double("Upsteem::Deploy::Tasks::Task") }
   let(:project_path) { "/path/to/project" }
   let(:environment_name) { "staging" }
   let(:feature_branch) { "DEV-123" }
-  let(:options) { { some: "thing" } }
+  let(:config_file_path) { instance_double("String") }
 
   let(:supported_environments) { %w[foo bar baz] }
   let(:task_run_result) { "foo" }
@@ -18,9 +16,9 @@ describe Upsteem::Deploy::Deployer do
   let(:task) { instance_double("Upsteem::Deploy::Tasks::Task") }
 
   def allow_configuration_setup
-    allow(Upsteem::Deploy::Configuration).to receive(
-      :set_up
-    ).with(project_path, options).once.and_return(configuration)
+    allow(Upsteem::Deploy::Factories::ConfigurationFactory).to receive(
+      :create
+    ).with(project_path, config_file_path).once.and_return(configuration)
   end
 
   def allow_environment_setup_without_specifying_outcome
@@ -92,7 +90,7 @@ describe Upsteem::Deploy::Deployer do
   describe ".new" do
     subject do
       described_class.new(
-        task_class, project_path, environment_name, feature_branch, options
+        task_class, project_path, environment_name, feature_branch, config_file_path
       )
     end
 
@@ -102,7 +100,7 @@ describe Upsteem::Deploy::Deployer do
   describe ".deploy" do
     subject do
       described_class.deploy(
-        task_class, project_path, environment_name, feature_branch, options
+        task_class, project_path, environment_name, feature_branch, config_file_path
       )
     end
 

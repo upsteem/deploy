@@ -5,8 +5,8 @@ module Upsteem
 
       private_class_method :new
 
-      def self.deploy(task_class, project_path, environment_name, feature_branch, options)
-        new(task_class, project_path, environment_name, feature_branch, options).deploy
+      def self.deploy(task_class, project_path, environment_name, feature_branch, config_file_path)
+        new(task_class, project_path, environment_name, feature_branch, config_file_path).deploy
       end
 
       def deploy
@@ -17,18 +17,18 @@ module Upsteem
 
       private
 
-      attr_reader :task_class, :project_path, :environment_name, :feature_branch, :options
+      attr_reader :task_class, :project_path, :environment_name, :feature_branch, :config_file_path
 
-      def initialize(task_class, project_path, environment_name, feature_branch, options)
+      def initialize(task_class, project_path, environment_name, feature_branch, config_file_path)
         @task_class = task_class
         @project_path = project_path
         @environment_name = environment_name
         @feature_branch = feature_branch
-        @options = options
+        @config_file_path = config_file_path
       end
 
       def configuration
-        Configuration.set_up(project_path, options)
+        Factories::ConfigurationFactory.create(project_path, config_file_path)
       end
       memoize :configuration
 
