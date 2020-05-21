@@ -1,6 +1,5 @@
 %w[
   constants
-  setup
 ].each do |file|
   require_relative("configuration/#{file}")
 end
@@ -9,21 +8,20 @@ module Upsteem
   module Deploy
     class Configuration
       include Constants
-      extend Setup
       extend Memoist
 
       attr_reader :project_path
 
       def supported_environments
-        SUPPORTED_ENVIRONMENTS
+        target_branches.keys
       end
 
       def environment_supported?(environment_name)
-        supported_environments.include?(environment_name)
+        target_branches[environment_name].present?
       end
 
       def find_target_branch(environment_name)
-        target_branches[environment_name] || environment_name.presence || raise(
+        target_branches[environment_name] || raise(
           ArgumentError, "Target branch not found for #{environment_name.inspect} environment"
         )
       end
@@ -63,13 +61,18 @@ module Upsteem
 
       attr_reader :options
 
-      def initialize(project_path, options = {})
+      def initialize(project_path, options)
         @project_path = project_path
         @options = options
       end
 
       def target_branches
-        TARGET_BRANCHES
+        TARGET_BRANCHES.merge(additional_target_branches.stringify_keys)
+      end
+      memoize :target_branches
+
+      def additional_target_branches
+        options[:additional_target_branches] || {}
       end
 
       def create_section_from_yaml_file(klass, file_path)
