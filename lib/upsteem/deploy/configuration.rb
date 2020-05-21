@@ -1,6 +1,5 @@
 %w[
   constants
-  setup
 ].each do |file|
   require_relative("configuration/#{file}")
 end
@@ -9,7 +8,6 @@ module Upsteem
   module Deploy
     class Configuration
       include Constants
-      extend Setup
       extend Memoist
 
       attr_reader :project_path
@@ -63,7 +61,7 @@ module Upsteem
 
       attr_reader :options
 
-      def initialize(project_path, options = {})
+      def initialize(project_path, options)
         @project_path = project_path
         @options = options
       end
