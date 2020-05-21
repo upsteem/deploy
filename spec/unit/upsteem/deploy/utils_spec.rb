@@ -61,7 +61,18 @@ describe Upsteem::Deploy::Utils do
       }
     end
 
-    it { is_expected.to eq(expected_result) }
+    shared_examples_for "loader" do
+      it { is_expected.to eq(expected_result) }
+    end
+
+    it_behaves_like "loader"
+
+    context "when loading returns false" do
+      let(:loaded_yaml) { false }
+      let(:expected_result) { {} }
+
+      it_behaves_like "loader"
+    end
   end
 
   describe ".normalize_string" do
