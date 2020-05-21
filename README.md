@@ -4,58 +4,74 @@ To simplify the deploy procedure of Upsteem applications and gems.
 # How to use in a project?
 Create an executable ruby script at the project root.
 
-## The simplest usage in an application
+## Usage in an application
 ```ruby
 Upsteem::Deploy.deploy_application(
   File.dirname(__FILE__), ARGV[0], ARGV[1]
 )
 ```
+With YAML configuration file:
 
-## The simplest usage in a gem
+```ruby
+Upsteem::Deploy.deploy_application(
+  File.dirname(__FILE__), ARGV[0], ARGV[1], "config/deploy.yml"
+)
+```
+
+## Usage in a gem
 
 ```ruby
 Upsteem::Deploy.deploy_gem(
   File.dirname(__FILE__), ARGV[0], ARGV[1]
 )
 ```
-
-## When application (or gem) depends on other gems
-Use configuration parameters:
+With YAML configuration file:
 
 ```ruby
-Upsteem::Deploy.deploy_application(
-  File.dirname(__FILE__), ARGV[0], ARGV[1],
-  shared_gems_to_update: %w(gem1),
-  env_gems_to_update: %w(gem2)
+Upsteem::Deploy.deploy_gem(
+  File.dirname(__FILE__), ARGV[0], ARGV[1], "config/deploy.yml"
 )
+```
+
+## When application (or gem) depends on other gems
+In the configuration file used in the examples above, declare:
+
+```yaml
+shared_gems_to_update:
+  - gem1
+env_gems_to_update:
+  - gem2
+  - gem3
 ```
 
 The gems listed in `:env_gems_to_update` are defined in environment-specific Gemfile (e.g. Gemfile.dev)
 while the ones listed in `:shared_gems_to_update` do not depend on environment.
 
 ## When deploy notifications need to be sent
-Notification URL and parameters should be defined in a configuration file which path should be passed
-as an option:
+In the main configuration file (e.g. config/deploy.yml), declare `:notifications` parameter which should point to another configuration file specific to the notification API you're using:
 
-```ruby
-Upsteem::Deploy.deploy_application(
-  File.dirname(__FILE__), ARGV[0], ARGV[1],
-  notifications: "config/deploy/notifications.yml"
-)
+```yaml
+notifications: config/deploy/notifications.yml
 ```
 
 ## When test suite needs to be run during deploy
-YAML configuration file path should be supplied via `:test_suite` option:
+Test suite YAML configuration file path should be supplied via `:test_suite` configuration parameter:
 
-```ruby
-Upsteem::Deploy.deploy_application(
-  File.dirname(__FILE__), ARGV[0], ARGV[1],
-  test_suite: "config/deploy/test_suite.yml"
-)
+```yaml
+test_suite: config/deploy/test_suite.yml
 ```
 
-### Sample data in configuration file:
+### Sample data in test suite configuration file:
 
-```
+```yaml
 framework: rspec
+```
+
+## When the application (or gem) uses additional, custom environments in addition to defaults (dev, staging, production)
+Map custom environments into their associated branches in the main configuration file:
+
+```yaml
+additional_target_branches:
+  customenv1: custombranch1
+  customenv2: custombranch2
 ```
