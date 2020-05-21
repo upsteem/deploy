@@ -66,3 +66,12 @@ test_suite: config/deploy/test_suite.yml
 ```yaml
 framework: rspec
 ```
+
+## When the application (or gem) uses additional, custom environments in addition to defaults (dev, staging, production)
+Map custom environments into their associated branches in the main configuration file:
+
+```yaml
+additional_target_branches:
+  customenv1: custombranch1
+  customenv2: custombranch2
+```
