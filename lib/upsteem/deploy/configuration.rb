@@ -13,15 +13,15 @@ module Upsteem
       attr_reader :project_path
 
       def supported_environments
-        SUPPORTED_ENVIRONMENTS
+        target_branches.keys
       end
 
       def environment_supported?(environment_name)
-        supported_environments.include?(environment_name)
+        target_branches[environment_name].present?
       end
 
       def find_target_branch(environment_name)
-        target_branches[environment_name] || environment_name.presence || raise(
+        target_branches[environment_name] || raise(
           ArgumentError, "Target branch not found for #{environment_name.inspect} environment"
         )
       end
@@ -69,6 +69,7 @@ module Upsteem
       def target_branches
         TARGET_BRANCHES
       end
+      memoize :target_branches
 
       def create_section_from_yaml_file(klass, file_path)
         ConfigurationSections::Factory.create_from_yaml_file(klass, project_path, file_path)

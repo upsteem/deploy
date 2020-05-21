@@ -102,7 +102,7 @@ describe Upsteem::Deploy::Configuration do
       it_behaves_like "found", "dev", "dev"
       it_behaves_like "found", "staging", "staging"
       it_behaves_like "found", "production", "master"
-      it_behaves_like "found", "foo", "foo"
+      it_behaves_like "not found", "foo"
       it_behaves_like "not found", ""
       it_behaves_like "not found", nil
     end
