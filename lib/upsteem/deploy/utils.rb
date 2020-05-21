@@ -8,7 +8,8 @@ module Upsteem
         end
 
         def load_yaml(project_path, relative_file_path)
-          YAML.load_file(File.join(project_path, relative_file_path)).deep_symbolize_keys
+          data = YAML.load_file(File.join(project_path, relative_file_path)) || {}
+          data.deep_symbolize_keys
         end
 
         def normalize_string(str)
