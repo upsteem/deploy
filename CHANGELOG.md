@@ -16,3 +16,7 @@
 ## 1.0.1
 
 * Updated usage instructions in README.
+
+## 1.1.0
+
+* Updated ruby-git from 1.3.0 to 1.7.0.
